@@ -1,0 +1,438 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Карта</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <script src="https://api-maps.yandex.ru/2.1/?load=package.full&lang=ru-RU" type="text/javascript"></script>
+
+    <link href="https://yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <script href="https://yandex.st/bootstrap/2.3.2/js/bootstrap.min.js" rel="stylesheet"></script>
+    <script src="https://yandex.st/jquery/3.1.1/jquery.min.js" type="text/javascript"></script>
+
+<!--     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap2-toggle.min.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap2-toggle.min.js"></script>
+ -->
+<!--     <script src="https://imry.github.io/router/context-menu.js" type="text/javascript"></script>
+    <script src="https://imry.github.io/router/dispenser_list.js" type="text/javascript"></script>
+    <script src="https://imry.github.io/router/clusterer.js" type="text/javascript"></script>
+ -->
+    <script src="context-menu.js" type="text/javascript"></script>
+    <script src="dispenser_list.js" type="text/javascript"></script>
+    <script src="clusterer.js" type="text/javascript"></script>
+
+
+
+    <script type="text/javascript">
+        var myMap;
+        var ncsv;
+        var position_obj;
+        function find_nearest(is_nearest = false) {
+            function getCoords(point) {
+                return [point["lat"], point["lon"]]
+            };
+            ncsv = [];
+
+            // if ($('#near').prop('checked')) {
+            if (is_nearest) {
+                $('#filter input').attr("disabled", true);
+                // my = result.geoObjects.position;
+                // console.log(position);
+                var distance = [];
+                // console.log(distance);
+                var coordSystem = myMap.options.get('projection').getCoordSystem();
+                for (var i = 0, l = csv.length; i < l; ++i) {
+                    distance.push([i, coordSystem.getDistance(position_obj.position, getCoords(csv[i]))]);
+                }
+                var d = distance.sort(function(a, b) {return (a[1] - b[1]);}).slice(0, 5);
+                ncsv = [];
+                for (var i = 0, l = d.length; i < l; ++i) {
+                    ncsv.push(csv[d[i][0]]);
+                }
+                // console.log(ncsv);
+            } else {
+                $('#filter input').removeAttr("disabled");
+                sel = get_selected();
+                ncsv = applyFilters(sel);
+            }
+
+            route = myMap.controls.get('routeButtonControl').routePanel.getRoute().getActiveRoute();
+            // console.log('in main ' + route);
+            // if (myContextMenu._route != null) {
+            //     myContextMenu._route = myContextMenu._route.getPaths().get(0);
+            // }
+            // console.log(myMap.controls.get('routeButtonControl').routePanel.getRoute().getActiveRoute().getPaths());
+            if (route != null) {
+                console.log(route.properties.get('distance'));
+                myMap.controls.remove(customControl);
+                customControl._dist = (route.properties.get('distance').value / 1000).toFixed(1);
+                myMap.controls.add(customControl, {
+                    float: 'none',
+                    position: {
+                        bottom: 40,
+                        left: 10
+                    }
+                });
+
+                $('#route').html("");
+                moveList = 'Трогаемся,</br>',
+                // way = route.getPaths().get(0);
+                // console.log(route.getPaths().get(0).getSegments().toArray());
+                segments = route.getPaths().get(0).getSegments().toArray();
+                for (var j = 0; j < segments.length; j++) {
+                    // console.log(segments[j].properties);
+                    prop = segments[j].properties;
+
+                    var street = prop.get('street');
+                    moveList += ('Едем ' + prop.get('action').text + (street ? ' на ' + street : '') + ', проезжаем ' + prop.get('distance').text + ' м.,');
+                    moveList += '</br>'
+                }
+                moveList += 'Останавливаемся.';
+                $('#route').append(moveList);
+
+                // console.log('in main ' + route.getPaths().get(0).getSegments().toArray());
+
+                function nearest(givenPoint, points) {
+                    var coordSystem = myMap.options.get('projection').getCoordSystem();
+
+                    var minDist = coordSystem.getDistance(givenPoint, getCoords(points[0]));
+                    var closestPointIdx = 0;
+                    for (var i = 1, l = points.length; i < l; ++i) {
+                        var dist = coordSystem.getDistance(givenPoint, getCoords(points[i]));
+                        if (minDist > dist) {
+                            minDist = dist;
+                            closestPointIdx = i;
+                        }
+                    }
+                    return points[closestPointIdx];
+                };
+
+                // console.log('сегментов ' + myContextMenu._route.getSegments().length);
+                var selNearest = [];
+                var segments = route.getPaths().get(0).getSegments().toArray();
+                for (var j = 0; j < segments.length; j++) {
+                    var geometry = segments[j].geometry._bounds[0];
+                    // console.log(geometry);
+                    selNearest.push(nearest(geometry, ncsv));
+                    // console.log('сегмент ' + street.length);
+                }
+                ncsv = Array.from(new Set(selNearest));
+                // console.log(selNearest.length, ncsv.length);
+                // console.log('Выбрано ' + ncsv);
+
+            } else {
+                myMap.controls.remove(customControl);
+            };
+            if (ncsv.length > 0) {
+                myClusterer.show(ncsv, is_nearest);
+            } else {
+                myClusterer.clear();
+            }
+        };
+
+        function applyFilters(sel) {
+            ncsv = csv;
+            if (sel["service"].length != 0) {
+                ncsv = csv.filter(function(it) {
+                    return (
+                        sel["service"].every(function(its) {
+                            return (it["services"].indexOf(its) != -1);
+                        }))
+                });
+            };
+            if (sel["fuel"].length != 0) {
+                ncsv = ncsv.filter(function(it) {
+                    return (
+                        sel["fuel"].every(function(its) {
+                            return (it["fuel"].indexOf(its) != -1);
+                        }))
+                });
+            };
+            // console.log(ncsv.length);
+            return ncsv;
+
+
+
+            // if (sel["service"].length == 0 && sel["fuel"].length == 0) {
+            //     return csv;
+            // } else {
+
+            //     return csv.filter(function(it) {
+            //         return (
+            //             (it["services"].filter(function(its) {
+            //                 return (sel["service"].indexOf(its) != -1);
+            //             }).length > 0)
+            //             &&
+            //             (it["fuel"].filter(function(its) {
+            //                 return (sel["fuel"].indexOf(its) != -1);
+            //             }).length > 0));
+            //     });
+            // // console.log(myContextMenu._route.getSegments());
+            // }
+        };
+
+        function get_selected(elem) {
+            var selected = [];
+            $('#filter input:checked').each(function() {selected.push(this.name)});
+
+            var sel = {service:[], fuel:[]};
+            selected.forEach(function(e){
+                if (['cls', 'shower', 'glass', 'cafe', 'wc', 'pum', 'mag'].indexOf(e) != -1) {
+                    sel['service'].push(e);
+                } else {
+                    sel['fuel'].push(e);
+                };
+            });
+            // console.log(sel);
+            return sel;
+        };
+
+        function route_to(lat, lon) {
+            // console.log(lat, lon);
+            var state = myMap.controls.get('routeButtonControl').routePanel.state;
+            state.set('expanded', true);
+            state.set('from', position_obj.position);
+            state.set('to', [lat, lon]);
+            // console.log(number);
+            // console.log(csv.filter(function(its){its["n"] == number}));
+        };
+
+
+        ymaps.ready(function () {
+            // var myinfobutton = new ymaps.control.Button(
+            //     data: {content: "Длинна маршрута"}
+            // //     options: {
+            // //         layout: ymaps.templateLayoutFactory.createClass("<div class='myButton'>" + "$[data.content]" + "</div>");
+            // // }
+            // );
+
+
+            // myinfobutton = new ymaps.control.Button({
+            //         data: {
+            //             content: 'Красная кнопка',
+            //             title: 'Нажмите на кнопку'
+            //         }
+            //     }, {
+            //         layout: ymaps.templateLayoutFactory.createClass(
+            //             // Если кнопка не нажата, к ней применится css-стиль 'myButton'
+            //             // Если кнопка нажата, к ней применятся css-стили 'myButton' и 'myButtonSelected'.
+            //             "<div class='myButton' title='$[data.title]'>" +
+            //             "$[data.content]" +
+            //             "</div>"
+            //         ),
+            //         size: "large"
+            //     });
+
+            myMap = new ymaps.Map('YMapsID', {
+                    center: [47, 39],
+                    zoom: 6,
+                    behaviors: ['drag', 'scrollZoom'],
+                    controls: ['default', 'routeButtonControl']
+                });
+
+        // Создаем собственный класс.
+            CustomControlClass = function (options) {
+                CustomControlClass.superclass.constructor.call(this, options);
+                this._$content = null;
+                this._dist = '';
+            };
+            // И наследуем его от collection.Item.
+            ymaps.util.augment(CustomControlClass, ymaps.collection.Item, {
+                onAddToMap: function (map) {
+                    CustomControlClass.superclass.onAddToMap.call(this, map);
+                    this.getParent().getChildElement(this).then(this._onGetChildElement, this);
+                },
+                onRemoveFromMap: function (oldMap) {
+                    if (this._$content) {
+                        this._$content.remove();
+                    }
+                    CustomControlClass.superclass.onRemoveFromMap.call(this, oldMap);
+                },
+                _onGetChildElement: function (parentDomContainer) {
+                    // Создаем HTML-элемент с текстом.
+                    this._$content = $('<div class="customControl"><b>Расстояние ' + this._dist + ' км</b><div>').appendTo(parentDomContainer);
+                }
+            });
+         
+            customControl = new CustomControlClass();
+            // myMap.controls.add(customControl, {
+            //     float: 'none',
+            //     position: {
+            //         bottom: 40,
+            //         left: 10
+            //     }
+            // });
+
+
+            ymaps.geolocation.get({
+                // Выставляем опцию для определения положения по ip
+                provider: 'yandex',
+                // Карта автоматически отцентрируется по положению пользователя.
+                mapStateAutoApply: true
+            }).then(function (result) {
+                // console.log(result.geoObjects.position);
+                position_obj = result.geoObjects;
+                myMap.geoObjects.add(result.geoObjects);
+            });
+
+            // mBounds = myMap.getBounds();
+            // myMap.controls.add('typeSelector');
+            // myMap.controls.add('zoomControl');
+            // // myMap.controls.add('smallZoomControl');
+            // // myMap.controls.add('scaleLine');
+            // // myMap.controls.add('trafficControl');
+            // myMap.controls.add('geolocationControl');
+            // // myMap.controls.add('routeEditor');
+            // searchControl = new ymaps.control.SearchControl({ boundedBy: mBounds });
+            // myMap.controls.add(searchControl);
+
+            myContextMenu = new ContextMenu(myMap);
+            myClusterer = new Clusterer(myMap);
+
+            // console.log(myMap.controls.get('routeButtonControl').routePanel.getRoute());
+            myMap.controls.get('routeButtonControl').routePanel.getRoute().options._cache.routeActiveStrokeColor = "#00008B";
+            myMap.controls.get('routeButtonControl').routePanel.getRoute().events.add("activeroutechange", function () {
+                console.log('activeroutechange');
+                // $('#near').bootstrapToggle('off');
+                find_nearest();
+            }).add("update", function () {
+                console.log('update');
+                // $('#near').bootstrapToggle('off');
+                find_nearest();
+            });
+            // myMap.geoObjects.add(
+            //     new ymaps.Placemark(
+            //         [ymaps.geolocation.latitude, ymaps.geolocation.longitude], {},
+            //         {
+            //             iconImageHref: 'geolocation.png',
+            //             iconImageSize: [24, 24],
+            //             iconImageOffset: [-12, -12]
+            //         }
+            //     )
+            // );
+
+            // myMap.events.add('click', function () {
+            //     console.log('click');
+            //     find_nearest();
+            // //     if (searchControl.isExpanded) { //Проверяем открыты ли результаты поиска и если открыты то закрываем
+            // //                 searchControl.collapse()};
+            // }) ;
+
+            find_nearest();
+            // myMap.controls.get('geolocationControl').events.fire('click');
+        });
+        $(document).ready(function(){
+            $("#route_header").click(
+                function(){
+                    $("#route").show();
+                    window.print();
+                    $("#route").hide();
+            });
+            $("#filter_nearest").click(
+                function(){
+                    find_nearest(true);
+                    myMap.geoObjects.add(position_obj);
+            });
+            $("#filter_all").click(
+                function(){
+                    find_nearest();
+            });
+        });
+    </script>
+
+    <style type="text/css">
+        body, html {
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            font-family: Arial;
+            font-size: 14px;
+        }
+        #YMapsID {
+            padding: 0;
+            margin: 0;
+            width: 1200px;
+            height: 800px;
+        }
+        #nearest {
+            width: 200px !important;
+        }
+        html, body {
+            position: absolute;
+        }
+        .dropdown {
+            position: absolute;
+        }
+        .dropdown-menu {
+            display: block;
+        }
+        #filter {
+            width: 600px;
+        }
+        .customControl {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 3px;
+            max-width: 300px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <div>
+                <table id="header">
+                <tr><td>
+                <table id="filter" disable>
+                    <tr>
+                        <td>Услуги</td>
+                        <td class="tdd"><label>Душ <input type="checkbox" name="shower" onchange="find_nearest()"></label></td>
+                        <td><label>glass <input type="checkbox" name="glass" onchange="find_nearest()"></label></td>
+                        <td><label>Кафе <input type="checkbox" name="cafe" onchange="find_nearest()"></label></td>
+                        <td><label>Туалет <input type="checkbox" name="wc" onchange="find_nearest()"></label></td>
+                        <td><label>pum <input type="checkbox" name="pum" onchange="find_nearest()"></label></td>
+                        <td><label>Магазин <input type="checkbox" name="mag" onchange="find_nearest()"></label></td>
+                        <td><label>cls<input type="checkbox" name="cls" onchange="find_nearest()"></label></td>
+                    </tr>
+                    <tr>
+                        <td>Топливо</td>
+                        <td><label>sg <input type="checkbox" name="sg" onchange="find_nearest()"></label></td>
+                        <td><label>ДТ <input type="checkbox" name="dt" onchange="find_nearest()"></label></td>
+                        <td><label>АИ80 <input type="checkbox" name="ai80" onchange="find_nearest()"></label></td>
+                        <td><label>АИ92 <input type="checkbox" name="ai92" onchange="find_nearest()"></label></td>
+                        <td><label>АИ95 <input type="checkbox" name="ai95" onchange="find_nearest()"></label></td>
+                        <td><label>АИ98 <input type="checkbox" name="ai98" onchange="find_nearest()"></label></td>
+                    </tr>
+<!--                     <tr>
+                        <td>
+                            
+                        </td>
+                    </tr> -->
+                </table>
+                </td>
+                <td>
+                    <!-- <input data-toggle="toggle" data-on="Ближайшие заправки" data-off="Все заправки" type="checkbox" data-width="200" data-height="25" id="near" onchange="find_nearest()"> -->
+                    <button type="button" class="btn" id="filter_all">Все АЗС «Газпром»</button>
+                </td>
+                <td>
+                    <button type="button" class="btn" id="filter_nearest">Ближайшие АЗС «Газпром»</button>
+                </td>
+<!--                 <td>
+                    <button type="button" class="btn" width="200px" id="nearest" onclick="find_nearest()">Ближайшие к маршруту</button>
+                </td> -->
+                </tr>
+                </table>
+            </div>
+            
+            <div>
+            <div id="YMapsID"></div>
+            </div>
+            <div id="route_header"><button type="button" class="btn" id="print">Печать</button></div>
+            <div id="route" hidden></div>
+        </div>
+    </div>
+</body>
+</html>
