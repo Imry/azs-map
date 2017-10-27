@@ -57,78 +57,87 @@
                 ncsv = applyFilters(sel);
             }
 
-            route = myMap.controls.get('routeButtonControl').routePanel.getRoute().getActiveRoute();
-            // console.log('in main ' + route);
-            // if (myContextMenu._route != null) {
-            //     myContextMenu._route = myContextMenu._route.getPaths().get(0);
-            // }
-            // console.log(myMap.controls.get('routeButtonControl').routePanel.getRoute().getActiveRoute().getPaths());
-            if (route != null) {
-                console.log(route.properties.get('distance'));
-                myMap.controls.remove(customControl);
-                customControl._dist = (route.properties.get('distance').value / 1000).toFixed(1);
-                myMap.controls.add(customControl, {
-                    float: 'none',
-                    position: {
-                        bottom: 40,
-                        left: 10
-                    }
-                });
 
-                $('#route').html("");
-                moveList = 'Трогаемся,</br>',
-                // way = route.getPaths().get(0);
-                // console.log(route.getPaths().get(0).getSegments().toArray());
-                segments = route.getPaths().get(0).getSegments().toArray();
-                for (var j = 0; j < segments.length; j++) {
-                    // console.log(segments[j].properties);
-                    prop = segments[j].properties;
 
-                    var street = prop.get('street');
-                    moveList += ('Едем ' + prop.get('action').text + (street ? ' на ' + street : '') + ', проезжаем ' + prop.get('distance').text + ' м.,');
-                    moveList += '</br>'
-                }
-                moveList += 'Останавливаемся.';
-                $('#route').append(moveList);
-
-                // console.log('in main ' + route.getPaths().get(0).getSegments().toArray());
-
-                function nearest(givenPoint, points) {
-                    var coordSystem = myMap.options.get('projection').getCoordSystem();
-
-                    var minDist = coordSystem.getDistance(givenPoint, getCoords(points[0]));
-                    var closestPointIdx = 0;
-                    for (var i = 1, l = points.length; i < l; ++i) {
-                        var dist = coordSystem.getDistance(givenPoint, getCoords(points[i]));
-                        if (minDist > dist) {
-                            minDist = dist;
-                            closestPointIdx = i;
+            route = myMap.controls.get('routeButtonControl').routePanel.getRouteAsync()
+                .then(function(multiRoute) {
+                route = multiRoute.getActiveRoute();
+                console.log(route);
+                // console.log('in main ' + route);
+                // if (myContextMenu._route != null) {
+                //     myContextMenu._route = myContextMenu._route.getPaths().get(0);
+                // }
+                // console.log(myMap.controls.get('routeButtonControl').routePanel.getRoute().getActiveRoute().getPaths());
+                if (route != null) {
+                    console.log(route.properties.get('distance'));
+                    myMap.controls.remove(customControl);
+                    customControl._dist = (route.properties.get('distance').value / 1000).toFixed(1);
+                    myMap.controls.add(customControl, {
+                        float: 'none',
+                        position: {
+                            bottom: 40,
+                            left: 10
                         }
+                    });
+
+                    $('#route').html("");
+                    moveList = 'Трогаемся,</br>',
+                    // way = route.getPaths().get(0);
+                    // console.log(route.getPaths().get(0).getSegments().toArray());
+                    segments = route.getPaths().get(0).getSegments().toArray();
+                    for (var j = 0; j < segments.length; j++) {
+                        // console.log(segments[j].properties);
+                        prop = segments[j].properties;
+
+                        var street = prop.get('street');
+                        moveList += ('Едем ' + prop.get('action').text + (street ? ' на ' + street : '') + ', проезжаем ' + prop.get('distance').text + ' м.,');
+                        moveList += '</br>'
                     }
-                    return points[closestPointIdx];
+                    moveList += 'Останавливаемся.';
+                    $('#route').append(moveList);
+
+                    // console.log('in main ' + route.getPaths().get(0).getSegments().toArray());
+
+                    function nearest(givenPoint, points) {
+                        var coordSystem = myMap.options.get('projection').getCoordSystem();
+
+                        var minDist = coordSystem.getDistance(givenPoint, getCoords(points[0]));
+                        var closestPointIdx = 0;
+                        for (var i = 1, l = points.length; i < l; ++i) {
+                            var dist = coordSystem.getDistance(givenPoint, getCoords(points[i]));
+                            if (minDist > dist) {
+                                minDist = dist;
+                                closestPointIdx = i;
+                            }
+                        }
+                        return points[closestPointIdx];
+                    };
+
+                    // console.log('сегментов ' + myContextMenu._route.getSegments().length);
+                    var selNearest = [];
+                    var segments = route.getPaths().get(0).getSegments().toArray();
+                    for (var j = 0; j < segments.length; j++) {
+                        var geometry = segments[j].geometry._bounds[0];
+                        // console.log(geometry);
+                        selNearest.push(nearest(geometry, ncsv));
+                        // console.log('сегмент ' + street.length);
+                    }
+                    ncsv = Array.from(new Set(selNearest));
+                    // console.log(selNearest.length, ncsv.length);
+                    // console.log('Выбрано ' + ncsv);
+
+                } else {
+                    myMap.controls.remove(customControl);
                 };
 
-                // console.log('сегментов ' + myContextMenu._route.getSegments().length);
-                var selNearest = [];
-                var segments = route.getPaths().get(0).getSegments().toArray();
-                for (var j = 0; j < segments.length; j++) {
-                    var geometry = segments[j].geometry._bounds[0];
-                    // console.log(geometry);
-                    selNearest.push(nearest(geometry, ncsv));
-                    // console.log('сегмент ' + street.length);
+                if (ncsv.length > 0) {
+                    myClusterer.show(ncsv, is_nearest);
+                } else {
+                    myClusterer.clear();
                 }
-                ncsv = Array.from(new Set(selNearest));
-                // console.log(selNearest.length, ncsv.length);
-                // console.log('Выбрано ' + ncsv);
 
-            } else {
-                myMap.controls.remove(customControl);
-            };
-            if (ncsv.length > 0) {
-                myClusterer.show(ncsv, is_nearest);
-            } else {
-                myClusterer.clear();
-            }
+            });
+
         };
 
         function applyFilters(sel) {
@@ -291,15 +300,23 @@
             myClusterer = new Clusterer(myMap);
 
             // console.log(myMap.controls.get('routeButtonControl').routePanel.getRoute());
-            myMap.controls.get('routeButtonControl').routePanel.getRoute().options._cache.routeActiveStrokeColor = "#00008B";
-            myMap.controls.get('routeButtonControl').routePanel.getRoute().events.add("activeroutechange", function () {
-                console.log('activeroutechange');
-                // $('#near').bootstrapToggle('off');
-                find_nearest();
-            }).add("update", function () {
-                console.log('update');
-                // $('#near').bootstrapToggle('off');
-                find_nearest();
+            myMap.controls.get('routeButtonControl').routePanel.enable();
+            myMap.controls.get('routeButtonControl').routePanel.getRouteAsync()
+                .then(function(multiRoute) {
+                    console.log('Set color')
+                    multiRoute.options._cache.routeActiveStrokeColor = "#00008B";
+                });
+            myMap.controls.get('routeButtonControl').routePanel.getRouteAsync()
+                .then(function(multiRoute) {
+                    multiRoute.events.add("activeroutechange", function () {
+                    console.log('activeroutechange');
+                    // $('#near').bootstrapToggle('off');
+                    find_nearest();
+                }).add("update", function () {
+                    console.log('update');
+                    // $('#near').bootstrapToggle('off');
+                    find_nearest();
+                });
             });
             // myMap.geoObjects.add(
             //     new ymaps.Placemark(
