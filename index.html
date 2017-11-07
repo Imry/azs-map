@@ -16,44 +16,74 @@
 </head>
 
 <body>
-    <div class="hero-unit">
-        <table id="header">
-            <tr>
-                <td>
-                    <table id="filter">
-                        <tr>
-                            <td>Услуги</td>
-                            <td class="tdd"><label>Душ <input type="checkbox" name="shower" onchange="find_nearest()"></label></td>
-                            <td><label>glass <input type="checkbox" name="glass" onchange="find_nearest()"></label></td>
-                            <td><label>Кафе <input type="checkbox" name="cafe" onchange="find_nearest()"></label></td>
-                            <td><label>Туалет <input type="checkbox" name="wc" onchange="find_nearest()"></label></td>
-                            <td><label>pum <input type="checkbox" name="pum" onchange="find_nearest()"></label></td>
-                            <td><label>Магазин <input type="checkbox" name="mag" onchange="find_nearest()"></label></td>
-                            <td><label>cls<input type="checkbox" name="cls" onchange="find_nearest()"></label></td>
-                        </tr>
-                        <tr>
-                            <td>Топливо</td>
-                            <td><label>sg <input type="checkbox" name="sg" onchange="find_nearest()"></label></td>
-                            <td><label>ДТ <input type="checkbox" name="dt" onchange="find_nearest()"></label></td>
-                            <td><label>АИ80 <input type="checkbox" name="ai80" onchange="find_nearest()"></label></td>
-                            <td><label>АИ92 <input type="checkbox" name="ai92" onchange="find_nearest()"></label></td>
-                            <td><label>АИ95 <input type="checkbox" name="ai95" onchange="find_nearest()"></label></td>
-                            <td><label>АИ98 <input type="checkbox" name="ai98" onchange="find_nearest()"></label></td>
-                        </tr>
-                    </table>
-                </td>
-                <td>
-                    <button type="button" class="btn" id="filter_all">Все АЗС «Газпром»</button>
-                </td>
-                <td>
-                    <button type="button" class="btn" id="filter_nearest">Ближайшие АЗС «Газпром»</button>
-                </td>
-            </tr>
-        </table>
+    <div id="wrapper">
+        <h3 class="main-title">АЗС ЛОКАТОР</h3>
+
+        <div id="filter">
+            <div class="fuel-types">
+                <h4 class="fuel-types__title">Виды топлива:</h4>
+                <ul class="fuel-types__list">
+                    <li>
+                        <input id="i-gaz" type="checkbox" name="sg" onchange="find_nearest()"/>
+                        <label class="icon-btn icon-btn--gaz" for="i-gaz"></label>
+                    </li>
+                    <li>
+                        <input id="i-dt" type="checkbox" name="dt" onchange="find_nearest()"/>
+                        <label class="icon-btn icon-btn--dt" for="i-dt"></label>
+                    </li>
+                    <li>
+                        <input id="i-ai80" type="checkbox" name="ai80" onchange="find_nearest()"/>
+                        <label class="icon-btn icon-btn--ai80" for="i-ai80"></label>
+                    </li>
+                    <li>
+                        <input id="i-ai92" type="checkbox" name="ai92" onchange="find_nearest()"/>
+                        <label class="icon-btn icon-btn--ai92" for="i-ai92"></label>
+                    </li>
+                    <li>
+                        <input id="i-ai95" type="checkbox" name="ai95" onchange="find_nearest()"/>
+                        <label class="icon-btn icon-btn--ai95" for="i-ai95"></label>
+                    </li>
+                    <li>
+                        <input id="i-ai98" type="checkbox" name="ai98" onchange="find_nearest()"/>
+                        <label class="icon-btn icon-btn--ai98" for="i-ai98"></label>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="services">
+                <h4 class="services__title">Услуги:</h4>
+                <ul class="services__list">
+                    <li>
+                        <input id="i-shower" type="checkbox" name="shower" onchange="find_nearest()"/>
+                        <label class="icon-btn icon-btn--shower" for="i-shower"></label>
+                    </li>
+                    <!--li><label>glass <input type="checkbox" name="glass" onchange="find_nearest()"></label></li-->
+                    <li>
+                        <input id="i-cafe" type="checkbox" name="cafe" onchange="find_nearest()"/>
+                        <label class="icon-btn icon-btn--cafe" for="i-cafe"></label>
+                    </li>
+                    <li>
+                        <input id="i-wc" type="checkbox" name="wc" onchange="find_nearest()"/>
+                        <label class="icon-btn icon-btn--wc" for="i-wc"></label>
+                    </li>
+                    <!--li><label>pum <input type="checkbox" name="pum" onchange="find_nearest()"></label></li-->
+                    <li>
+                        <input id="i-shop" type="checkbox" name="mag" onchange="find_nearest()"/>
+                        <label class="icon-btn icon-btn--shop" for="i-shop"></label>
+                    </li>
+                    <!--li><label>cls<input type="checkbox" name="cls" onchange="find_nearest()"></label></li-->
+                </ul>
+            </div>
+
+            <div class="buttons">
+                <button type="button" class="btn" id="filter_all">Все АЗС</button>
+                <button type="button" class="btn" id="filter_nearest">Ближайшие АЗС</button>
+            </div>
+        </div>
+    </div>
 
     <div id="YMapsID"></div>
     <div id="route" hidden></div>
-    </div>
 </body>
 
 </html>

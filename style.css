@@ -3,34 +3,182 @@ body, html {
     margin: 0;
     width: 100%;
     height: 100%;
-    font-family: Arial;
+    font-family: Helvetica, Arial, sans-serif;
     font-size: 14px;
 }
+
 #YMapsID {
     padding: 0;
     margin: 0;
-    width: 1200px;
-    height: 800px;
+    width: 100%;
+    height: 100%;
 }
-#nearest {
-    width: 200px !important;
+
+#wrapper {
+    overflow: hidden;
+    width: 100%;
+    background: #e7f6fd;
+    text-align: center;
 }
-html, body {
-    position: absolute;
+
+#filter {
+    display: inline-block;
 }
-.dropdown {
-    position: absolute;
+
+.main-title {
+    margin: 5px 0 10px 0;
+    color: #0173ba;
+    text-align: center;
 }
-.dropdown-menu {
+
+.fuel-types {
+    float: left;
+}
+
+.fuel-types__title,
+.services__title {
+    border: 1px solid #c5d0d4;
+    border-radius: 15px;
+    background: #fff;
+    color: #0173ba;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 5px 10px;
+    margin: 0;
+}
+
+.fuel-types__list,
+.services__list {
+    list-style: none;
+    padding: 0;
+    user-select: none;
+}
+
+.fuel-types__list input[type=checkbox],
+.services__list input[type=checkbox] {
+    display: none;
+}
+
+.fuel-types__list li {
+    display: inline-block;
+}
+
+.services {
+    float: left;
+    margin-left: 15px;
+}
+
+.services__list li {
+    display: inline-block;
+}
+
+.buttons {
+    float: left;
+    margin-left: 15px;
+}
+
+.btn {
+    background: #0173ba;
+    color: #fff;
+    min-width: 170px;
+    border: 0;
+    border-radius: 15px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.buttons .btn {
     display: block;
 }
-#filter {
-    width: 600px;
+
+.icon-btn {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    cursor: pointer;
 }
-.customControl {
-    background-color: #fff;
-    padding: 10px;
-    border-radius: 3px;
-    max-width: 300px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+
+.icon-btn--gaz {
+    background-image: url("images/icon-gaz.svg");
+}
+
+input:checked + .icon-btn--gaz{
+    background-image: url("images/icon-gaz_active.svg");
+}
+
+.icon-btn--dt {
+    background-image: url("images/icon-dt.svg");
+}
+
+input:checked + .icon-btn--dt {
+    background-image: url("images/icon-dt_active.svg");
+}
+
+.icon-btn--ai80 {
+    background-image: url("images/icon-ai80.svg");
+}
+
+input:checked + .icon-btn--ai80 {
+    background-image: url("images/icon-ai80_active.svg");
+}
+
+.icon-btn--ai92 {
+    background-image: url("images/icon-ai92.svg");
+}
+
+input:checked + .icon-btn--ai92 {
+    background-image: url("images/icon-ai92_active.svg");
+}
+
+.icon-btn--ai95 {
+    background-image: url("images/icon-ai95.svg");
+}
+
+input:checked + .icon-btn--ai95 {
+    background-image: url("images/icon-ai95_active.svg");
+}
+
+.icon-btn--ai98 {
+    background-image: url("images/icon-ai98.svg");
+}
+
+input:checked + .icon-btn--ai98 {
+    background-image: url("images/icon-ai98_active.svg");
+}
+
+.icon-btn--shower {
+    background-image: url("images/icon-shower.svg");
+}
+
+input:checked + .icon-btn--shower {
+    background-image: url("images/icon-shower_active.svg");
+}
+
+.icon-btn--cafe {
+    background-image: url("images/icon-cafe.svg");
+}
+
+input:checked + .icon-btn--cafe {
+    background-image: url("images/icon-cafe_active.svg");
+}
+
+.icon-btn--wc {
+    background-image: url("images/icon-wc.svg");
+}
+
+input:checked + .icon-btn--wc {
+    background-image: url("images/icon-wc_active.svg");
+}
+
+.icon-btn--shop {
+    background-image: url("images/icon-shop.svg");
+}
+
+input:checked + .icon-btn--shop {
+    background-image: url("images/icon-shop_active.svg");
 }

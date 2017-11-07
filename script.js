@@ -136,7 +136,7 @@ ymaps.ready(function () {
     center: [47, 39],
     zoom: 6,
     behaviors: ['drag', 'scrollZoom'],
-    controls: ['default', 'routeButtonControl']
+    controls: ['routeButtonControl', 'geolocationControl', 'searchControl', 'zoomControl', 'rulerControl']
   });
 
   CustomControlClass = function (options) {
