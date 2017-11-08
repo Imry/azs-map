@@ -180,7 +180,7 @@ ymaps.ready(function () {
   myMap.controls.get('routeButtonControl').routePanel.enable();
   myMap.controls.get('routeButtonControl').routePanel.getRouteAsync()
     .then(function(multiRoute) {
-      multiRoute.options._cache.routeActiveStrokeColor = "#00008B";
+      multiRoute.options._cache.routeActiveStrokeColor = "#0070ea";
     });
   myMap.controls.get('routeButtonControl').routePanel.getRouteAsync()
     .then(function(multiRoute) {
