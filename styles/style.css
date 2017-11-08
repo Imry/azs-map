@@ -104,81 +104,81 @@ body, html {
 }
 
 .icon-btn--gaz {
-    background-image: url("images/icon-gaz.svg");
+    background-image: url("../images/icon-gaz.svg");
 }
 
 input:checked + .icon-btn--gaz{
-    background-image: url("images/icon-gaz_active.svg");
+    background-image: url("../images/icon-gaz_active.svg");
 }
 
 .icon-btn--dt {
-    background-image: url("images/icon-dt.svg");
+    background-image: url("../images/icon-dt.svg");
 }
 
 input:checked + .icon-btn--dt {
-    background-image: url("images/icon-dt_active.svg");
+    background-image: url("../images/icon-dt_active.svg");
 }
 
 .icon-btn--ai80 {
-    background-image: url("images/icon-ai80.svg");
+    background-image: url("../images/icon-ai80.svg");
 }
 
 input:checked + .icon-btn--ai80 {
-    background-image: url("images/icon-ai80_active.svg");
+    background-image: url("../images/icon-ai80_active.svg");
 }
 
 .icon-btn--ai92 {
-    background-image: url("images/icon-ai92.svg");
+    background-image: url("../images/icon-ai92.svg");
 }
 
 input:checked + .icon-btn--ai92 {
-    background-image: url("images/icon-ai92_active.svg");
+    background-image: url("../images/icon-ai92_active.svg");
 }
 
 .icon-btn--ai95 {
-    background-image: url("images/icon-ai95.svg");
+    background-image: url("../images/icon-ai95.svg");
 }
 
 input:checked + .icon-btn--ai95 {
-    background-image: url("images/icon-ai95_active.svg");
+    background-image: url("../images/icon-ai95_active.svg");
 }
 
 .icon-btn--ai98 {
-    background-image: url("images/icon-ai98.svg");
+    background-image: url("../images/icon-ai98.svg");
 }
 
 input:checked + .icon-btn--ai98 {
-    background-image: url("images/icon-ai98_active.svg");
+    background-image: url("../images/icon-ai98_active.svg");
 }
 
 .icon-btn--shower {
-    background-image: url("images/icon-shower.svg");
+    background-image: url("../images/icon-shower.svg");
 }
 
 input:checked + .icon-btn--shower {
-    background-image: url("images/icon-shower_active.svg");
+    background-image: url("../images/icon-shower_active.svg");
 }
 
 .icon-btn--cafe {
-    background-image: url("images/icon-cafe.svg");
+    background-image: url("../images/icon-cafe.svg");
 }
 
 input:checked + .icon-btn--cafe {
-    background-image: url("images/icon-cafe_active.svg");
+    background-image: url("../images/icon-cafe_active.svg");
 }
 
 .icon-btn--wc {
-    background-image: url("images/icon-wc.svg");
+    background-image: url("../images/icon-wc.svg");
 }
 
 input:checked + .icon-btn--wc {
-    background-image: url("images/icon-wc_active.svg");
+    background-image: url("../images/icon-wc_active.svg");
 }
 
 .icon-btn--shop {
-    background-image: url("images/icon-shop.svg");
+    background-image: url("../images/icon-shop.svg");
 }
 
 input:checked + .icon-btn--shop {
-    background-image: url("images/icon-shop_active.svg");
+    background-image: url("../images/icon-shop_active.svg");
 }
