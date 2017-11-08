@@ -21,7 +21,7 @@ function Clusterer(map) {
       obj[i] = new ymaps.GeoObject({
         geometry: {
           type: "Point",
-          coordinates: [item["lat"], item["lon"]],
+          coordinates: [item["lat"], item["lon"]]
         },
         properties: getPointData(
           item["address"],
@@ -29,8 +29,14 @@ function Clusterer(map) {
           item["services"],
           item["fuel"],
           item["lat"],
-          item["lon"])
-      })
+          item["lon"]
+        )
+      },
+      {
+        iconLayout: 'default#image',
+        iconImageHref: 'images/icon-location.svg',
+        iconImageSize: [25, 32]
+      });
     }
     this._clusterer.add(obj);
     if (zoom) {

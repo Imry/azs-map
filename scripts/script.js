@@ -30,7 +30,7 @@ function find_nearest(is_nearest) {
     .then(function(multiRoute) {
       route = multiRoute.getActiveRoute();
       if (route !== null) {
-        console.log(route.properties.get('distance'));
+        // console.log(route.properties.get('distance'));
         myMap.controls.remove(customControl);
         customControl._dist = (route.properties.get('distance').value / 1000).toFixed(1);
         myMap.controls.add(customControl, {
