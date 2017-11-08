@@ -5,12 +5,23 @@ function Clusterer(map) {
 
   this.show = function(data, zoom) {
     function getPointData(address, n, services, fuel, lat, lon) {
+      var formattedServices = services.map(function(service) {
+        return '<span class="icon-in-map-baloon m-' + service + '"></span>'
+      });
+      var formattedFuel = fuel.map(function(fuel) {
+        return '<span class="icon-in-map-baloon m-' + fuel + '"></span>'
+      });
+
       return {
-        balloonContentHeader: '<font size=3><b><a target="_blank" href="https://yandex.ru">Здесь может быть ссылка на инфу</a></b></font>',
-        balloonContentBody: '<p>Адрес: ' + address + '</p><p>Сервисы: ' + services + '</p><p>Тип толпива: ' + fuel + '</p><p>Широта: ' + lat + ', Долгота: ' + lon
-        + '<p><button type="button" class="btn" onclick=route_to(' + lat + ',' + lon + ')>Маршрут</button></p>',
-        balloonContentFooter: '<font size=1>Информация предоставлена: ...',
-        clusterCaption: 'Заправка <strong>' + n + '</strong>'
+        balloonContentHeader: '<span class="c-blue">АЗС №' + n + '</span>',
+        balloonContentBody:
+          '<p><span class="c-blue">Адрес:</span> ' + address + '</p>'
+          + '<p><span class="c-blue">Сервисы:</span> ' + formattedServices.join(' ') + '</p>'
+          + '<p><span class="c-blue">Тип толпива:</span> ' + formattedFuel.join(' ') + '</p>'
+          + '<p><span class="c-blue">Широта:</span> ' + lat
+          + ', <span class="c-blue">Долгота:</span> ' + lon + '</p>'
+          + '<p><button type="button" class="btn" onclick=route_to(' + lat + ',' + lon + ')>Построить маршрут</button></p>',
+        clusterCaption: '<span class="c-blue"><strong>АЗС №' + n + '</strong></span>'
       };
     }
 

@@ -87,6 +87,8 @@ body, html {
     font-size: 14px;
     margin-bottom: 10px;
     padding: 5px;
+    cursor: pointer;
+    outline: none;
 }
 
 .buttons .btn {
@@ -107,6 +109,7 @@ body, html {
     background-image: url("../images/icon-gaz.svg");
 }
 
+.icon-in-map-baloon.m-sg,
 input:checked + .icon-btn--gaz{
     background-image: url("../images/icon-gaz_active.svg");
 }
@@ -115,6 +118,7 @@ input:checked + .icon-btn--gaz{
     background-image: url("../images/icon-dt.svg");
 }
 
+.icon-in-map-baloon.m-dt,
 input:checked + .icon-btn--dt {
     background-image: url("../images/icon-dt_active.svg");
 }
@@ -123,6 +127,7 @@ input:checked + .icon-btn--dt {
     background-image: url("../images/icon-ai80.svg");
 }
 
+.icon-in-map-baloon.m-ai80,
 input:checked + .icon-btn--ai80 {
     background-image: url("../images/icon-ai80_active.svg");
 }
@@ -131,6 +136,7 @@ input:checked + .icon-btn--ai80 {
     background-image: url("../images/icon-ai92.svg");
 }
 
+.icon-in-map-baloon.m-ai92,
 input:checked + .icon-btn--ai92 {
     background-image: url("../images/icon-ai92_active.svg");
 }
@@ -139,6 +145,7 @@ input:checked + .icon-btn--ai92 {
     background-image: url("../images/icon-ai95.svg");
 }
 
+.icon-in-map-baloon.m-ai95,
 input:checked + .icon-btn--ai95 {
     background-image: url("../images/icon-ai95_active.svg");
 }
@@ -147,30 +154,63 @@ input:checked + .icon-btn--ai95 {
     background-image: url("../images/icon-ai98.svg");
 }
 
+.icon-in-map-baloon.m-ai98,
 input:checked + .icon-btn--ai98 {
     background-image: url("../images/icon-ai98_active.svg");
 }
-
+/*
 .icon-btn--shower {
     background-image: url("../images/icon-shower.svg");
 }
 
+.icon-in-map-baloon.m-shower,
 input:checked + .icon-btn--shower {
     background-image: url("../images/icon-shower_active.svg");
+}
+*/
+
+.icon-btn--water {
+    background-image: url("../images/icon-water.svg");
+}
+
+.icon-in-map-baloon.m-glass,
+input:checked + .icon-btn--water {
+    background-image: url("../images/icon-water_active.svg");
+}
+
+.icon-btn--tire {
+    background-image: url("../images/icon-tire.svg");
+}
+
+.icon-in-map-baloon.m-pum,
+input:checked + .icon-btn--tire {
+    background-image: url("../images/icon-tire_active.svg");
+}
+
+.icon-btn--clean {
+    background-image: url("../images/icon-clean.svg");
+}
+
+.icon-in-map-baloon.m-clean,
+input:checked + .icon-btn--clean {
+    background-image: url("../images/icon-clean_active.svg");
 }
 
 .icon-btn--cafe {
     background-image: url("../images/icon-cafe.svg");
 }
 
+.icon-in-map-baloon.m-cafe,
 input:checked + .icon-btn--cafe {
     background-image: url("../images/icon-cafe_active.svg");
 }
+
 
 .icon-btn--wc {
     background-image: url("../images/icon-wc.svg");
 }
 
+.icon-in-map-baloon.m-wc,
 input:checked + .icon-btn--wc {
     background-image: url("../images/icon-wc_active.svg");
 }
@@ -179,6 +219,20 @@ input:checked + .icon-btn--wc {
     background-image: url("../images/icon-shop.svg");
 }
 
+.icon-in-map-baloon.m-mag,
 input:checked + .icon-btn--shop {
     background-image: url("../images/icon-shop_active.svg");
+}
+
+.c-blue {
+    color: #0173ba;
+}
+
+.icon-in-map-baloon {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    vertical-align: bottom;
 }
