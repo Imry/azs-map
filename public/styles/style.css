@@ -15,14 +15,17 @@ body, html {
 }
 
 #wrapper {
+    position: relative;
     overflow: hidden;
     width: 100%;
+    padding-top: 3px;
     background: #e7f6fd;
     text-align: center;
 }
 
 #filter {
     display: inline-block;
+    position: relative;
 }
 
 .main-title {
@@ -249,4 +252,24 @@ input:checked + .icon-btn--shop {
     background-repeat: no-repeat;
     background-size: cover;
     vertical-align: bottom;
+}
+
+.dropdown-btn {
+    display: block;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    background: url("../images/arrow-up.svg") no-repeat center;
+    background-size: contain;
+    border: 0;
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    outline: none;
+}
+
+.dropdown-btn.m-raised {
+    background-image: url("../images/arrow-down.svg");
+    bottom: 5px;
 }

@@ -194,6 +194,11 @@ ymaps.ready(function () {
   find_nearest();
 });
 
+function filterPanelToggle() {
+  $('.js-filter-panel').toggle('fast');
+  $('.js-dropdown-btn').toggleClass('m-raised');
+}
+
 $(document).ready(function(){
   $("#filter_nearest").click(function(){
     find_nearest(true);
@@ -203,4 +208,6 @@ $(document).ready(function(){
   $("#filter_all").click(function(){
     find_nearest();
   });
+
+  $('.js-dropdown-btn').click(filterPanelToggle);
 });
