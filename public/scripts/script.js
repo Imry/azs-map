@@ -41,7 +41,7 @@ function find_nearest(is_nearest) {
           }
         });
 
-        $('#route').html("");
+        /* $('#route').html("");
         moveList = 'Трогаемся,</br>';
         segments = route.getPaths().get(0).getSegments().toArray();
         for (var j = 0; j < segments.length; j++) {
@@ -52,7 +52,7 @@ function find_nearest(is_nearest) {
           moveList += '</br>'
         }
         moveList += 'Останавливаемся.';
-        $('#route').append(moveList);
+        $('#route').append(moveList); */
 
         function nearest(givenPoint, points) {
           var coordSystem = myMap.options.get('projection').getCoordSystem();
