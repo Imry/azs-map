@@ -9,7 +9,7 @@ function Clusterer(map) {
         return '<span class="icon-in-map-baloon m-' + service + '"></span>'
       });
       var formattedFuel = fuel.map(function(fuel) {
-        return '<span class="icon-in-map-baloon m-' + fuel + '"></span>'
+        return '<p><span class="icon-in-map-baloon m-' + fuel[0] + '"></span> ' +  fuel[1] + 'р.<p>'
       });
 
       return {
@@ -38,7 +38,7 @@ function Clusterer(map) {
           item["address"],
           item["n"],
           item["services"],
-          item["fuel"],
+          item["price"],
           item["lat"],
           item["lon"]
         )
