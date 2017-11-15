@@ -238,8 +238,8 @@ ContextMenu.View = function () {
     this.events = $({});
     this._container = $('body');
     this._menu = $(
-        '<div class="dropdown clearfix">' +
-            '<ul class="dropdown-menu">' +
+        '<div class="contextmenu clearfix">' +
+            '<ul class="contextmenu-list">' +
                 '<li><a data-action="getInfo" href="#">Что здесь?</a></li>' +
                 '<li><a data-action="routeTo" href="#">Проехать сюда</a></li>' +
                 '<li><a data-action="routeFrom" href="#">Проехать отсюда</a></li>' +

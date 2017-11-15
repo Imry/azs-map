@@ -275,3 +275,24 @@ input:checked + .icon-btn--shop {
     background-image: url("../images/arrow-down.svg");
     bottom: 5px;
 }
+
+.contextmenu {
+    position: absolute;
+}
+
+.contextmenu-list {
+    display: block;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 3px;
+    max-width: 300px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.customControl {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 3px;
+    max-width: 300px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
