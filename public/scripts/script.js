@@ -213,7 +213,7 @@ function filterPanelToggle() {
 $(document).ready(function(){
   $("#filter_nearest").click(function(){
     find_nearest(true);
-    myMap.geoObjects.add(position_obj);
+    // myMap.geoObjects.add(position_obj);
   });
 
   $("#filter_all").click(function(){
