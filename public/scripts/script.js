@@ -191,6 +191,10 @@ ymaps.ready(function () {
       });
     });
 
+  myMap.controls.get('geolocationControl').events.add("locationchange", function (event) {
+    position_obj = event.get('geoObjects');
+  })
+
   find_nearest();
 });
 
