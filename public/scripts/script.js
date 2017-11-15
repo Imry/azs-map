@@ -133,7 +133,7 @@ function route_to(lat, lon) {
 
 ymaps.ready(function () {
   myMap = new ymaps.Map('YMapsID', {
-    center: [47, 39],
+    center: [55, 37],
     zoom: 6,
     behaviors: ['drag', 'scrollZoom'],
     controls: ['routeButtonControl', 'geolocationControl', 'searchControl', 'zoomControl', 'rulerControl']
@@ -168,16 +168,22 @@ ymaps.ready(function () {
     // Выставляем опцию для определения положения по ip
     provider: 'yandex',
     // Карта автоматически отцентрируется по положению пользователя.
-    mapStateAutoApply: true
+    // mapStateAutoApply: true
   }).then(function (result) {
     position_obj = result.geoObjects;
-    myMap.geoObjects.add(result.geoObjects);
+    myMap.setCenter(position_obj.position, 10, {
+      checkZoomRange: true
+  });
+    // myMap.geoObjects.add(result.geoObjects);
   });
 
   myContextMenu = new ContextMenu(myMap);
   myClusterer = new Clusterer(myMap);
 
   myMap.controls.get('routeButtonControl').routePanel.enable();
+  myMap.controls.get('routeButtonControl').routePanel.options.set({
+        types: { driving: true }
+    });
   myMap.controls.get('routeButtonControl').routePanel.getRouteAsync()
     .then(function(multiRoute) {
       multiRoute.options._cache.routeActiveStrokeColor = "#0070ea";
@@ -194,6 +200,7 @@ ymaps.ready(function () {
   myMap.controls.get('geolocationControl').events.add("locationchange", function (event) {
     position_obj = event.get('geoObjects');
   })
+
 
   find_nearest();
 });
