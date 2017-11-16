@@ -36,7 +36,6 @@ ContextMenu.prototype = {
         this._view.clear();
         this._view.render(e.get('position'));
         this._coordinates = e.get('coordinates');
-        // console.log(e);
     },
     _onCloseMenu: function (e) {
         this._view.clear();
@@ -90,19 +89,9 @@ ContextMenu.prototype = {
         var state = this._model._map.controls.get('routeButtonControl').routePanel.state,
             origin = state.get('from'),
             destination = state.get('to');
-
-        // console.log(origin);
-        // console.log(destination);
-
-        // if(origin && destination) {
-        //     this._model.getRoute([origin, destination]);
-
-        // }
     },
     _addWayPoint: function (index) {
         var state = this._model._map.controls.get('routeButtonControl').routePanel.state;
-        // console.log(state);
-
         if (index == 0) {
             state.set('from', this._coordinates);
             state.set('expanded', true);
@@ -110,48 +99,8 @@ ContextMenu.prototype = {
             state.set('to', this._coordinates);
             state.set('expanded', true);
         }
-
-        // var waypoints = this._waypoints,
-        //     label = ContextMenu.WAYPOINTS_LABELS.charAt(index),
-        //     marker = this.addMarker(label);
-
-        // if(waypoints[index]) {
-        //     this._map.geoObjects
-        //         .remove(waypoints[index]);
-        // }
-
-        // if(this._route) {
-        //     this._map.geoObjects
-        //         .remove(this._route);
-        // }
-
-        // this._map.geoObjects
-        //     .add(waypoints[index] = marker);
     },
     _onRouteLoaded: function (e) {
-        // this._route = e.get('result');
-        // this._map.geoObjects
-        //     .add(this._route = e.get('result'));
-
-        // this._route.options.set('preset', 'router#route');
-
-        // console.log(this._map.geoObjects);
-
-        // $('#route').html("");
-        // moveList = 'Трогаемся,</br>',
-        // way = e.get('result');
-        // // console.log(way);
-        // segments = way.getSegments();
-        // for (var j = 0; j < segments.length; j++) {
-        //     var street = segments[j].getStreet();
-        //     moveList += ('Едем ' + segments[j].getHumanAction() + (street ? ' на ' + street : '') + ', проезжаем ' + segments[j].getLength() + ' м.,');
-        //     moveList += '</br>'
-        // }
-
-        // moveList += 'Останавливаемся.';
-        // // Выводим маршрутный лист.
-        // $('#route').append(moveList);
-
         find_nearest();
     }
 };
@@ -177,12 +126,6 @@ ContextMenu.Model.prototype = {
             this._map.events
                 .add('contextmenu', this._onRightClick, this)
                 .add(['click', 'actiontick'], this._onMapAction, this);
-            // var behavior = this._map.behaviors.get('routeEditor');
-            // behavior.events.add('routechange', function (e) {
-            //    var newRoute = e.get('newRoute');
-            //    console.log(newRoute.getLength()); // длина нового маршрута
-            // });
-            // this._map.controls.get('routeButtonControl').routePanel.events.add('optionschange', console.log('Options change'), this);
         }
     },
     _detachHandlers: function () {

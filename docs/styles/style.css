@@ -289,7 +289,7 @@ input:checked + .icon-btn--shop {
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
-.customControl {
+.distancePanel {
     background-color: #fff;
     padding: 10px;
     border-radius: 3px;
