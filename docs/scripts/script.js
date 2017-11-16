@@ -107,7 +107,7 @@ function showData(data, zoom) {
 
 
 function routeTo(lat, lon) {
-  nearest_mode = false;
+  setMode(false);
   var state = myMap.controls.get('routeButtonControl').routePanel.state;
   state.set('expanded', true);
   state.set('from', position);
@@ -163,6 +163,17 @@ ymaps.ready(function () {
   })
 });
 
+function setMode(mode) {
+  nearest_mode = mode;
+  $('.buttons .pushed').removeClass('pushed');
+  if (mode) {
+    $('#filter_nearest').addClass('pushed');
+  } else {
+    $('#filter_all').addClass('pushed');
+
+  }
+}
+
 function filterPanelToggle() {
   $('.js-filter-panel').toggle('fast');
   $('.js-dropdown-btn').toggleClass('m-raised');
@@ -170,24 +181,26 @@ function filterPanelToggle() {
 
 $(document).ready(function(){
   $("#filter_nearest").click(function(e){
-    $('.buttons .pushed').removeClass('pushed');
-    $(e.target).addClass('pushed');
+    // $('.buttons .pushed').removeClass('pushed');
+    // $(e.target).addClass('pushed');
     if (!nearest_mode) {
       myMap.controls.get('routeButtonControl').routePanel.state.set({
         expanded: false,
         from: '',
         to: ''
       });
-      nearest_mode = true;
+      setMode(true);
+      // nearest_mode = true;
       getVisible(true);
     }
   });
 
   $("#filter_all").click(function(e){
-    $('.buttons .pushed').removeClass('pushed');
-    $(e.target).addClass('pushed');
+    // $('.buttons .pushed').removeClass('pushed');
+    // $(e.target).addClass('pushed');
     if (nearest_mode) {
-      nearest_mode = false;
+      setMode(false);
+      // nearest_mode = false;
       $('#filter').find('input').prop("checked", false);
       getVisible(true);
     }

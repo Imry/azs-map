@@ -93,7 +93,7 @@ ContextMenu.prototype = {
     },
     _addWayPoint: function (index) {
         var state = this._model._map.controls.get('routeButtonControl').routePanel.state;
-        nearest_mode = false;
+        setMode(false);
         if (index == 0) {
             state.set({
                 from: this._coordinates,
