@@ -5,7 +5,7 @@ const NEAR_ROUTE_MAX_DISTANCE = 200;
 const NEAR_ROUTE_MAX_DISTANCE_RATIO = 0.1;
 
 var myMap;
-var position_obj;
+var position;
 var csv;
 var nearest = false;
 
@@ -24,17 +24,16 @@ function find_nearest(is_nearest) {
     var distance = [];
     var coordSystem = myMap.options.get('projection').getCoordSystem();
     for (var i = 0, l = csv.length; i < l; ++i) {
-      distance.push([i, coordSystem.getDistance(position_obj.position, getCoords(csv[i]))]);
+      distance.push([i, coordSystem.getDistance(position, getCoords(csv[i]))]);
     }
-    var d = distance.sort(function(a, b) {return (a[1] - b[1]);}).slice(0, 5);
+    var d = distance.sort(function(a, b) {return (a[1] - b[1]);}).slice(0, NEAREST_COUNT);
     ncsv = [];
     for (var i = 0, l = d.length; i < l; ++i) {
       ncsv.push(csv[d[i][0]]);
     }
   } else {
     $('#filter').find('input').removeAttr("disabled");
-    sel = get_selected();
-    ncsv = applyFilters(sel);
+    ncsv = applyFilters(csv);
   }
 
   var route = myMap.controls.get('routeButtonControl').routePanel.getRouteAsync()
@@ -86,66 +85,37 @@ function find_nearest(is_nearest) {
     });
 }
 
-function applyFilters(sel) {
-  ncsv = csv;
-  if (sel["service"].length !== 0) {
-    ncsv = csv.filter(function(it) {
+function applyFilters(data) {
+  var result = data;
+  services = $('#filter .services__list input:checked').map(function() {return $(this).attr('name');}).toArray();
+  if (services.length !== 0) {
+    result = data.filter(function(it) {
       return (
-        sel["service"].every(function(its) {
+        services.every(function(its) {
           return (it["services"].indexOf(its) !== -1);
         }))
     });
   }
-  if (sel["fuel"].length !== 0) {
-    ncsv = ncsv.filter(function(it) {
+  fuel = $('#filter .fuel-types__list input:checked').map(function() {return $(this).attr('name');}).toArray();
+  if (fuel.length !== 0) {
+    result = result.filter(function(it) {
       return (
-        sel["fuel"].every(function(its) {
+        fuel.every(function(its) {
           return (it["fuel"].indexOf(its) !== -1);
         }))
     });
   }
-  return ncsv;
+  return result;
 }
 
-function getTextRoute(route) {
-  moveList = 'Трогаемся,</br>';
-  segments = route.getPaths().get(0).getSegments().toArray();
-  for (var j = 0; j < segments.length; j++) {
-    prop = segments[j].properties;
-
-    var street = prop.get('street');
-    moveList += ('Едем ' + prop.get('action').text + (street ? ' на ' + street : '') + ', проезжаем ' + prop.get('distance').text + ' м.,');
-    moveList += '</br>'
-  }
-  return moveList + 'Останавливаемся.';
-}
-
-function get_selected() {
-  var selected = [];
-  $('#filter input:checked').each(function() {selected.push(this.name)});
-
-  var sel = {service:[], fuel:[]};
-  selected.forEach(function(e){
-    if (['cls', 'shower', 'glass', 'cafe', 'wc', 'pum', 'mag'].indexOf(e) !== -1) {
-      sel['service'].push(e);
-    } else {
-      sel['fuel'].push(e);
-    }
-  });
-  return sel;
-}
-
-function route_to(lat, lon) {
+function routeTo(lat, lon) {
   var state = myMap.controls.get('routeButtonControl').routePanel.state;
   state.set('expanded', true);
-  state.set('from', position_obj.position);
+  state.set('from', position);
   state.set('to', [lat, lon]);
 }
 
 ymaps.ready(function () {
-  augmentDistancePanleClass();
-
-
   myMap = new ymaps.Map('YMapsID', {
     center: [55, 37],
     zoom: 6,
@@ -153,15 +123,12 @@ ymaps.ready(function () {
     controls: ['routeButtonControl', 'geolocationControl', 'searchControl', 'zoomControl', 'rulerControl']
   });
 
-
   ymaps.geolocation.get({
-    // Выставляем опцию для определения положения по ip
     provider: 'auto',
-    // Карта автоматически отцентрируется по положению пользователя.
     // mapStateAutoApply: true
   }).then(function (result) {
-    position_obj = result.geoObjects;
-    myMap.setCenter(position_obj.position, 12, {
+    position = result.geoObjects.position;
+    myMap.setCenter(position, 12, {
       checkZoomRange: true
     });
     myMap.geoObjects.add(result.geoObjects);
@@ -169,6 +136,7 @@ ymaps.ready(function () {
 
   myContextMenu = new ContextMenu(myMap);
   myClusterer = new Clusterer(myMap);
+  augmentDistancePanleClass();
   myDistancePanel = new DistancePanelClass();
 
   myMap.controls.get('routeButtonControl').routePanel.enable();
@@ -189,7 +157,7 @@ ymaps.ready(function () {
     });
 
   myMap.controls.get('geolocationControl').events.add("locationchange", function (event) {
-    position_obj = event.get('geoObjects');
+    position = event.get('geoObjects').position;
   })
 
   loadCSV(AZS_CSV_FILE_MAP, AZS_CSV_FILE_PRICE);
@@ -205,7 +173,6 @@ function filterPanelToggle() {
 $(document).ready(function(){
   $("#filter_nearest").click(function(){
     find_nearest(true);
-    // myMap.geoObjects.add(position_obj);
   });
 
   $("#filter_all").click(function(){

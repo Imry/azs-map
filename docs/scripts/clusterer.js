@@ -20,7 +20,7 @@ function Clusterer(map) {
           + '<p><span class="c-blue">Тип толпива:</span> ' + formattedFuel.join(' ') + '</p>'
           + '<p><span class="c-blue">Широта:</span> ' + lat
           + ', <span class="c-blue">Долгота:</span> ' + lon + '</p>'
-          + '<p><button type="button" class="btn" onclick=route_to(' + lat + ',' + lon + ')>Построить маршрут</button></p>',
+          + '<p><button type="button" class="btn" onclick=routeTo(' + lat + ',' + lon + ')>Построить маршрут</button></p>',
         clusterCaption: '<span class="c-blue"><strong>АЗС №' + n + '</strong></span>'
       };
     }
