@@ -169,7 +169,9 @@ function filterPanelToggle() {
 }
 
 $(document).ready(function(){
-  $("#filter_nearest").click(function(){
+  $("#filter_nearest").click(function(e){
+    $('.buttons .pushed').removeClass('pushed');
+    $(e.target).addClass('pushed');
     if (!nearest_mode) {
       myMap.controls.get('routeButtonControl').routePanel.state.set({
         expanded: false,
@@ -181,7 +183,9 @@ $(document).ready(function(){
     }
   });
 
-  $("#filter_all").click(function(){
+  $("#filter_all").click(function(e){
+    $('.buttons .pushed').removeClass('pushed');
+    $(e.target).addClass('pushed');
     if (nearest_mode) {
       nearest_mode = false;
       $('#filter').find('input').prop("checked", false);
