@@ -235,6 +235,8 @@ ymaps.ready(function () {
       var data = allData[0].data;
       var price = allData[1].data;
 
+      price.forEach(function(el){ if (el.dtW != ''){console.log(el);}});
+
       var result = data.reduce(function(result, el) {
         el.services = el.services.split(',').map(function(s) {return s.trim()});
         el.fuel = el.fuel.split(',').map(function(s) {return s.trim()});
