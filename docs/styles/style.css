@@ -213,7 +213,7 @@ input:checked + .icon-btn--tire {
     background-image: url("../images/icon-clean.svg");
 }
 
-.icon-in-map-baloon.m-clean,
+.icon-in-map-baloon.m-cls,
 input:checked + .icon-btn--clean {
     background-image: url("../images/icon-clean_active.svg");
 }

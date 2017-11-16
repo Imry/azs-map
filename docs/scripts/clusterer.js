@@ -1,6 +1,5 @@
 function Clusterer(map) {
   this._clusterer = null;
-  this._objects = [];
   this._map = null;
 
   this.show = function(data, zoom) {

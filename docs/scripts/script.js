@@ -5,87 +5,80 @@ const NEAR_ROUTE_MAX_DISTANCE = 100;
 const NEAR_ROUTE_MAX_DISTANCE_RATIO = 0.25;
 
 var myMap;
-var position;
-var csv;
-var nearest = false;
+var position = null;
+var csv = [];
+var nearest_mode = true;
 
-var ncsv;
+function getVisible(zoom) {
+  if (position == null) return;
+  if (csv.length == 0) return;
 
-function find_nearest(is_nearest) {
   function getCoords(point) {
     return [point["lat"], point["lon"]]
   }
 
-  ncsv = [];
+  var data = applyFilters(csv);
 
-  if (csv.length == 0) return;
-
-  if (is_nearest) {
-    $('#filter').find('input').attr("disabled", true);
+  if (nearest_mode) {
     var distance = [];
     var coordSystem = myMap.options.get('projection').getCoordSystem();
-    for (var i = 0, l = csv.length; i < l; ++i) {
-      distance.push([i, coordSystem.getDistance(position, getCoords(csv[i]))]);
+    for (var i = 0, l = data.length; i < l; ++i) {
+      distance.push([data[i], coordSystem.getDistance(position, getCoords(data[i]))]);
     }
-    var d = distance.sort(function(a, b) {return (a[1] - b[1]);}).slice(0, NEAREST_COUNT);
-    ncsv = [];
-    for (var i = 0, l = d.length; i < l; ++i) {
-      ncsv.push(csv[d[i][0]]);
+    nearest = distance.sort(function(a, b) {return (a[1] - b[1]);}).slice(0, NEAREST_COUNT);
+    data = [];
+    for (var i = 0; i < nearest.length; ++i) {
+      data.push(nearest[i][0]);
     }
+
+    showData(data, zoom);
   } else {
-    $('#filter').find('input').removeAttr("disabled");
-    ncsv = applyFilters(csv);
-  }
+    var route = myMap.controls.get('routeButtonControl').routePanel.getRouteAsync()
+      .then(function(multiRoute) {
+        route = multiRoute.getActiveRoute();
+        if (route !== null) {
 
-  var route = myMap.controls.get('routeButtonControl').routePanel.getRouteAsync()
-    .then(function(multiRoute) {
-      route = multiRoute.getActiveRoute();
-      if (route !== null) {
-
-        myMap.controls.remove(myDistancePanel);
-        myDistancePanel._dist = (route.properties.get('distance').value / 1000).toFixed(1);
-        myMap.controls.add(myDistancePanel, {
-          float: 'none',
-          position: {
-            bottom: 40,
-            left: 10
-          }
-        });
-
-        function nearest(givenPoint, points) {
-          var coordSystem = myMap.options.get('projection').getCoordSystem();
-
-          var minDist = coordSystem.getDistance(givenPoint, getCoords(points[0]));
-          var closestPointIdx = 0;
-          for (var i = 1, l = points.length; i < l; ++i) {
-            var dist = coordSystem.getDistance(givenPoint, getCoords(points[i]));
-            if (minDist > dist) {
-              minDist = dist;
-              closestPointIdx = i;
+          myMap.controls.remove(myDistancePanel);
+          myDistancePanel._dist = (route.properties.get('distance').value / 1000).toFixed(1);
+          myMap.controls.add(myDistancePanel, {
+            float: 'none',
+            position: {
+              bottom: 40,
+              left: 10
             }
+          });
+
+          function nearest(givenPoint, points) {
+            var coordSystem = myMap.options.get('projection').getCoordSystem();
+
+            var minDist = coordSystem.getDistance(givenPoint, getCoords(points[0]));
+            var closestPointIdx = 0;
+            for (var i = 1, l = points.length; i < l; ++i) {
+              var dist = coordSystem.getDistance(givenPoint, getCoords(points[i]));
+              if (minDist > dist) {
+                minDist = dist;
+                closestPointIdx = i;
+              }
+            }
+            return points[closestPointIdx];
           }
-          return points[closestPointIdx];
+
+          var selNearest = [];
+          var segments = route.getPaths().get(0).getSegments().toArray();
+          for (var j = 0; j < segments.length; j++) {
+            var geometry = segments[j].geometry._bounds[0];
+            selNearest.push(nearest(geometry, data));
+          }
+          data = Array.from(new Set(selNearest));
+
+        } else {
+          myMap.controls.remove(myDistancePanel);
         }
 
-        var selNearest = [];
-        var segments = route.getPaths().get(0).getSegments().toArray();
-        for (var j = 0; j < segments.length; j++) {
-          var geometry = segments[j].geometry._bounds[0];
-          selNearest.push(nearest(geometry, ncsv));
-        }
-        ncsv = Array.from(new Set(selNearest));
+        showData(data, zoom);
+      });
+    }
 
-      } else {
-        myMap.controls.remove(myDistancePanel);
-      }
-
-      if (ncsv.length > 0) {
-        // myClusterer.show(ncsv, is_nearest);
-        myClusterer.show(ncsv, true);
-      } else {
-        myClusterer.clear();
-      }
-    });
 }
 
 function applyFilters(data) {
@@ -101,11 +94,20 @@ function applyFilters(data) {
     }
     return data;
   }
-
   return applyPartial(applyPartial(csv, 'services__list', 'services'), 'fuel-types__list', 'fuel');
 }
 
+function showData(data, zoom) {
+  if (data.length > 0) {
+    myClusterer.show(data, zoom);
+  } else {
+    myClusterer.clear();
+  }
+}
+
+
 function routeTo(lat, lon) {
+  nearest_mode = false;
   var state = myMap.controls.get('routeButtonControl').routePanel.state;
   state.set('expanded', true);
   state.set('from', position);
@@ -129,9 +131,14 @@ ymaps.ready(function () {
       checkZoomRange: true
     });
     myMap.geoObjects.add(result.geoObjects);
+
+    myContextMenu = new ContextMenu(myMap, position);
+  }).then(function (result) {
+    loadCSV(CSV_MAP, CSV_PRICE);
+    nearest_mode = true;
+    getVisible(true);
   });
 
-  myContextMenu = new ContextMenu(myMap);
   myClusterer = new Clusterer(myMap);
   augmentDistancePanleClass();
   myDistancePanel = new DistancePanelClass();
@@ -147,20 +154,13 @@ ymaps.ready(function () {
   myMap.controls.get('routeButtonControl').routePanel.getRouteAsync()
     .then(function(multiRoute) {
       multiRoute.events.add("activeroutechange", function () {
-        find_nearest();
-      }).add("update", function () {
-        find_nearest();
+        getVisible();
       });
     });
 
   myMap.controls.get('geolocationControl').events.add("locationchange", function (event) {
     position = event.get('geoObjects').position;
   })
-
-  loadCSV(CSV_MAP, CSV_PRICE, find_nearest);
-  // loadCSV(CSV_MAP, CSV_PRICE, getVisible);
-
-  // getVisible();
 });
 
 function filterPanelToggle() {
@@ -170,11 +170,23 @@ function filterPanelToggle() {
 
 $(document).ready(function(){
   $("#filter_nearest").click(function(){
-    find_nearest(true);
+    if (!nearest_mode) {
+      myMap.controls.get('routeButtonControl').routePanel.state.set({
+        expanded: false,
+        from: '',
+        to: ''
+      });
+      nearest_mode = true;
+      getVisible(true);
+    }
   });
 
   $("#filter_all").click(function(){
-    find_nearest();
+    if (nearest_mode) {
+      nearest_mode = false;
+      $('#filter').find('input').prop("checked", false);
+      getVisible(true);
+    }
   });
 
   $('.js-dropdown-btn').click(filterPanelToggle);

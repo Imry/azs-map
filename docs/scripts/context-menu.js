@@ -1,9 +1,10 @@
-function ContextMenu(map) {
+function ContextMenu(map, position) {
     this._coordinates = null;
     this._waypoints = [];
     this._route = null;
     this._model = new ContextMenu.Model(map);
     this._view = new ContextMenu.View();
+    this._position = position;
 
     this.setMap(map);
 }
@@ -92,13 +93,20 @@ ContextMenu.prototype = {
     },
     _addWayPoint: function (index) {
         var state = this._model._map.controls.get('routeButtonControl').routePanel.state;
+        nearest_mode = false;
         if (index == 0) {
-            state.set('from', this._coordinates);
-            state.set('expanded', true);
+            state.set({
+                from: this._coordinates,
+                expanded: true
+            });
         } else {
+            if (state.get('from') == null || state.get('from') == '') {
+                state.set('from', this._position);
+            }
             state.set('to', this._coordinates);
             state.set('expanded', true);
         }
+        getVisible();
     },
     _onRouteLoaded: function (e) {
         find_nearest();

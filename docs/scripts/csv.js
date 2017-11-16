@@ -11,7 +11,7 @@ Papa.parsePromise = function(file) {
   });
 };
 
-function loadCSV(map, price, onload) {
+function loadCSV(map, price) {
   Promise.all([Papa.parsePromise(map), Papa.parsePromise(price)])
     .then(function(allData) {
       // All data available here in the order it was called.
@@ -22,7 +22,12 @@ function loadCSV(map, price, onload) {
           return el.n == it.n;
         });
         if (p.length > 0) {
-          el.services = el.services.split(',').map(function(s) {return s.trim()});
+          el.services = el.services.split(',').map(function(s) {
+            s = s.trim();
+            if (s != 'shower') {
+              return s.trim();
+            }
+          });
           el.price = [];
           el.fuel = []
           for (key in p[0]) {
@@ -36,6 +41,7 @@ function loadCSV(map, price, onload) {
         return result;
       }, []);
       csv = result;
-      onload();
+      nearest_mode = true;
+      getVisible(true);
     });
 };
