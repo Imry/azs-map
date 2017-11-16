@@ -169,11 +169,15 @@ function filterPanelToggle() {
 }
 
 $(document).ready(function(){
-  $("#filter_nearest").click(function(){
+  $("#filter_nearest").click(function(e){
+    $('.buttons .pushed').removeClass('pushed');
+    $(e.target).addClass('pushed');
     find_nearest(true);
   });
 
-  $("#filter_all").click(function(){
+  $("#filter_all").click(function(e){
+    $('.buttons .pushed').removeClass('pushed');
+    $(e.target).addClass('pushed');
     find_nearest();
   });
 
