@@ -1,12 +1,21 @@
+const AZS_CSV_FILES = ['data/dispenser_list_web.csv', 'data/dispenser_list_price.csv'];
+const NEAREST_COUNT = 5;
+const NEAR_ROUTE_MAX_DISTANCE = 200;
+const NEAR_ROUTE_MAX_DISTANCE_RATIO = 0.1;
+
 var myMap;
-var ncsv;
 var position_obj;
 var csv;
+var nearest = false;
+
+var ncsv;
+
 
 function find_nearest(is_nearest) {
   function getCoords(point) {
     return [point["lat"], point["lon"]]
   }
+
   ncsv = [];
 
   if (is_nearest) {
@@ -31,7 +40,6 @@ function find_nearest(is_nearest) {
     .then(function(multiRoute) {
       route = multiRoute.getActiveRoute();
       if (route !== null) {
-        // console.log(route.properties.get('distance'));
         myMap.controls.remove(customControl);
         customControl._dist = (route.properties.get('distance').value / 1000).toFixed(1);
         myMap.controls.add(customControl, {
@@ -43,16 +51,7 @@ function find_nearest(is_nearest) {
         });
 
         /* $('#route').html("");
-        moveList = 'Трогаемся,</br>';
-        segments = route.getPaths().get(0).getSegments().toArray();
-        for (var j = 0; j < segments.length; j++) {
-          prop = segments[j].properties;
 
-          var street = prop.get('street');
-          moveList += ('Едем ' + prop.get('action').text + (street ? ' на ' + street : '') + ', проезжаем ' + prop.get('distance').text + ' м.,');
-          moveList += '</br>'
-        }
-        moveList += 'Останавливаемся.';
         $('#route').append(moveList); */
 
         function nearest(givenPoint, points) {
@@ -82,7 +81,8 @@ function find_nearest(is_nearest) {
       }
 
       if (ncsv.length > 0) {
-        myClusterer.show(ncsv, is_nearest);
+        // myClusterer.show(ncsv, is_nearest);
+        myClusterer.show(ncsv, true);
       } else {
         myClusterer.clear();
       }
@@ -108,6 +108,19 @@ function applyFilters(sel) {
     });
   }
   return ncsv;
+}
+
+function getTextRoute(route) {
+  moveList = 'Трогаемся,</br>';
+  segments = route.getPaths().get(0).getSegments().toArray();
+  for (var j = 0; j < segments.length; j++) {
+    prop = segments[j].properties;
+
+    var street = prop.get('street');
+    moveList += ('Едем ' + prop.get('action').text + (street ? ' на ' + street : '') + ', проезжаем ' + prop.get('distance').text + ' м.,');
+    moveList += '</br>'
+  }
+  return moveList + 'Останавливаемся.';
 }
 
 function get_selected() {
@@ -167,15 +180,15 @@ ymaps.ready(function () {
 
   ymaps.geolocation.get({
     // Выставляем опцию для определения положения по ip
-    provider: 'yandex',
+    provider: 'auto',
     // Карта автоматически отцентрируется по положению пользователя.
     // mapStateAutoApply: true
   }).then(function (result) {
     position_obj = result.geoObjects;
-    myMap.setCenter(position_obj.position, 10, {
+    myMap.setCenter(position_obj.position, 12, {
       checkZoomRange: true
-  });
-    // myMap.geoObjects.add(result.geoObjects);
+    });
+    myMap.geoObjects.add(result.geoObjects);
   });
 
   myContextMenu = new ContextMenu(myMap);
