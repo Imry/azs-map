@@ -1,8 +1,8 @@
-const AZS_CSV_FILE_MAP = 'data/dispenser_list_web.csv';
-const AZS_CSV_FILE_PRICE = 'data/dispenser_list_price.csv';
+const CSV_MAP = 'data/dispenser_list_web.csv';
+const CSV_PRICE = 'data/dispenser_list_price.csv';
 const NEAREST_COUNT = 5;
-const NEAR_ROUTE_MAX_DISTANCE = 200;
-const NEAR_ROUTE_MAX_DISTANCE_RATIO = 0.1;
+const NEAR_ROUTE_MAX_DISTANCE = 100;
+const NEAR_ROUTE_MAX_DISTANCE_RATIO = 0.25;
 
 var myMap;
 var position;
@@ -11,13 +11,14 @@ var nearest = false;
 
 var ncsv;
 
-
 function find_nearest(is_nearest) {
   function getCoords(point) {
     return [point["lat"], point["lon"]]
   }
 
   ncsv = [];
+
+  if (csv.length == 0) return;
 
   if (is_nearest) {
     $('#filter').find('input').attr("disabled", true);
@@ -40,6 +41,7 @@ function find_nearest(is_nearest) {
     .then(function(multiRoute) {
       route = multiRoute.getActiveRoute();
       if (route !== null) {
+
         myMap.controls.remove(myDistancePanel);
         myDistancePanel._dist = (route.properties.get('distance').value / 1000).toFixed(1);
         myMap.controls.add(myDistancePanel, {
@@ -72,6 +74,7 @@ function find_nearest(is_nearest) {
           selNearest.push(nearest(geometry, ncsv));
         }
         ncsv = Array.from(new Set(selNearest));
+
       } else {
         myMap.controls.remove(myDistancePanel);
       }
@@ -86,26 +89,20 @@ function find_nearest(is_nearest) {
 }
 
 function applyFilters(data) {
-  var result = data;
-  services = $('#filter .services__list input:checked').map(function() {return $(this).attr('name');}).toArray();
-  if (services.length !== 0) {
-    result = data.filter(function(it) {
-      return (
-        services.every(function(its) {
-          return (it["services"].indexOf(its) !== -1);
-        }))
-    });
+  function applyPartial(data, filter_block, data_field) {
+    filter = $('#filter .' + filter_block + ' input:checked').map(function() {return $(this).attr('name');}).toArray();
+    if (filter.length !== 0) {
+      data = data.filter(function(it) {
+        return (
+          filter.every(function(its) {
+            return (it[data_field].indexOf(its) !== -1);
+          }))
+      });
+    }
+    return data;
   }
-  fuel = $('#filter .fuel-types__list input:checked').map(function() {return $(this).attr('name');}).toArray();
-  if (fuel.length !== 0) {
-    result = result.filter(function(it) {
-      return (
-        fuel.every(function(its) {
-          return (it["fuel"].indexOf(its) !== -1);
-        }))
-    });
-  }
-  return result;
+
+  return applyPartial(applyPartial(csv, 'services__list', 'services'), 'fuel-types__list', 'fuel');
 }
 
 function routeTo(lat, lon) {
@@ -160,9 +157,10 @@ ymaps.ready(function () {
     position = event.get('geoObjects').position;
   })
 
-  loadCSV(AZS_CSV_FILE_MAP, AZS_CSV_FILE_PRICE);
+  loadCSV(CSV_MAP, CSV_PRICE, find_nearest);
+  // loadCSV(CSV_MAP, CSV_PRICE, getVisible);
 
-  find_nearest();
+  // getVisible();
 });
 
 function filterPanelToggle() {

@@ -11,23 +11,24 @@ Papa.parsePromise = function(file) {
   });
 };
 
-function loadCSV(map, price) {
+function loadCSV(map, price, onload) {
   Promise.all([Papa.parsePromise(map), Papa.parsePromise(price)])
     .then(function(allData) {
       // All data available here in the order it was called.
       var data = allData[0].data;
       var price = allData[1].data;
       var result = data.reduce(function(result, el) {
-        el.services = el.services.split(',').map(function(s) {return s.trim()});
-        el.fuel = el.fuel.split(',').map(function(s) {return s.trim()});
         p = price.filter(function(it) {
-          return el["n"] == it["n"];
+          return el.n == it.n;
         });
         if (p.length > 0) {
-          el["price"] = [];
+          el.services = el.services.split(',').map(function(s) {return s.trim()});
+          el.price = [];
+          el.fuel = []
           for (key in p[0]) {
             if (!['type', 'lat', 'lon', 'address', 'n', 'fuel', 'region', 'dtW'].includes(key) && p[0][key] != '') {
-              el["price"].push([key, p[0][key]]);
+              el.price.push([key, p[0][key]]);
+              el.fuel.push(key);
             }
           }
           result.push(el);
@@ -35,6 +36,6 @@ function loadCSV(map, price) {
         return result;
       }, []);
       csv = result;
-      find_nearest();
+      onload();
     });
 };
