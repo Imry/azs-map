@@ -179,6 +179,8 @@ function setMode(mode) {
 function filterPanelToggle() {
   $('.js-filter-panel').toggle('fast');
   $('.js-dropdown-btn').toggleClass('m-raised');
+  $('#YMapsID').toggleClass('m-raised');
+  myMap.container.fitToViewport();
 }
 
 $(document).ready(function(){
