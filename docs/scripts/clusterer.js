@@ -15,11 +15,11 @@ function Clusterer(map) {
         balloonContentHeader: '<span class="c-blue">АЗС №' + n + '</span>',
         balloonContentBody:
           '<p><span class="c-blue">Адрес:</span> ' + address + '</p>'
+          + '<p><button type="button" class="btn" style="margin:0" onclick=routeTo(' + lat + ',' + lon + ')>Построить маршрут</button></p>'
           + '<p><span class="c-blue">Сервисы:</span> ' + formattedServices.join(' ') + '</p>'
           + '<p><span class="c-blue">Тип толпива:</span> ' + formattedFuel.join(' ') + '</p>'
           + '<p><span class="c-blue">Широта:</span> ' + lat
-          + ', <span class="c-blue">Долгота:</span> ' + lon + '</p>'
-          + '<p><button type="button" class="btn" onclick=routeTo(' + lat + ',' + lon + ')>Построить маршрут</button></p>',
+          + ', <span class="c-blue">Долгота:</span> ' + lon + '</p>',
         clusterCaption: '<span class="c-blue"><strong>АЗС №' + n + '</strong></span>'
       };
     }
