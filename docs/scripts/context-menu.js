@@ -95,6 +95,9 @@ ContextMenu.prototype = {
         var state = this._model._map.controls.get('routeButtonControl').routePanel.state;
         setMode(false);
         if (index == 0) {
+            if (state.get('to') == null || state.get('to') == '') {
+                state.set('to', this._position);
+            }
             state.set({
                 from: this._coordinates,
                 expanded: true
@@ -103,8 +106,10 @@ ContextMenu.prototype = {
             if (state.get('from') == null || state.get('from') == '') {
                 state.set('from', this._position);
             }
-            state.set('to', this._coordinates);
-            state.set('expanded', true);
+            state.set({
+                to: this._coordinates,
+                expanded: true
+            });
         }
         getVisible();
     },

@@ -155,6 +155,8 @@ ymaps.ready(function () {
     .then(function(multiRoute) {
       multiRoute.events.add("activeroutechange", function () {
         getVisible();
+      }).add("update", function () {
+        getVisible();
       });
     });
 
