@@ -78,6 +78,4 @@ function Clusterer(map) {
   };
 
   this.setMap(map);
-}
-
-
+};

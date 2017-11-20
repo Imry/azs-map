@@ -18,7 +18,6 @@ ContextMenu.prototype = {
             .add('openmenu', this._onOpenMenu, this)
             .add('closemenu', this._onCloseMenu, this)
             .add('infoloaded', this._onInfoLoaded, this)
-            .add('routeloaded', this._onRouteLoaded, this);
 
         this._view.events
             .on('selectaction', ymaps.util.bind(this._onSelectAction, this));
@@ -28,7 +27,6 @@ ContextMenu.prototype = {
             .remove('openmenu', this._onOpenMenu, this)
             .remove('closemenu', this._onCloseMenu, this)
             .remove('infoloaded', this._onInfoLoaded, this)
-            .remove('routeloaded', this._onRouteLoaded, this);
 
         this._view.events
             .off('selectaction');
@@ -80,41 +78,29 @@ ContextMenu.prototype = {
     },
     routeFrom: function () {
         this._addWayPoint(0);
-        // this._getRoute();
     },
     routeTo: function () {
         this._addWayPoint(1);
-        // this._getRoute();
-    },
-    _getRoute: function () {
-        var state = this._model._map.controls.get('routeButtonControl').routePanel.state,
-            origin = state.get('from'),
-            destination = state.get('to');
     },
     _addWayPoint: function (index) {
         var state = this._model._map.controls.get('routeButtonControl').routePanel.state;
-        setMode(false);
+        var from, to;
         if (index == 0) {
             if (state.get('to') == null || state.get('to') == '') {
-                state.set('to', this._position);
+                to = this._position;
             }
-            state.set({
-                from: this._coordinates,
-                expanded: true
-            });
+            from = this._coordinates
         } else {
             if (state.get('from') == null || state.get('from') == '') {
-                state.set('from', this._position);
+                from = this._position;
             }
-            state.set({
-                to: this._coordinates,
-                expanded: true
-            });
+            to = this._coordinates
         }
-        getVisible();
-    },
-    _onRouteLoaded: function (e) {
-        find_nearest();
+        state.set({
+            from: from,
+            to: to,
+            expanded: true
+        });
     }
 };
 
@@ -171,21 +157,6 @@ ContextMenu.Model.prototype = {
     _onInfoLoaded: function (res) {
         this.events.fire('infoloaded', {
             result: res.geoObjects.get(0)
-        });
-    },
-    getRoute: function (waypoints) {
-        this._route = this._map.controls.get('routeButtonControl').routePanel.getRoute().getActiveRoute();
-        // console.log(this._map.controls.get('routeButtonControl').routePanel.getRoute().getActiveRoute());
-        // console.log('in context: ' + this._route);
-        this._onRouteLoaded(this._route);
-        // route = ymaps.route(waypoints)
-        //     .then(
-        //         ymaps.util.bind(this._onRouteLoaded, this)
-        //     );
-    },
-    _onRouteLoaded: function (route) {
-        this.events.fire('routeloaded', {
-            result: route.getPaths().get(0)
         });
     }
 };

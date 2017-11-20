@@ -17,7 +17,7 @@ function loadCSV(map, price) {
       // All data available here in the order it was called.
       var data = allData[0].data;
       var price = allData[1].data;
-      var result = data.reduce(function(result, el) {
+      var result = data.reduce(function(acc, el) {
         p = price.filter(function(it) {
           return el.n == it.n;
         });
@@ -29,19 +29,19 @@ function loadCSV(map, price) {
             }
           });
           el.price = [];
-          el.fuel = []
-          for (key in p[0]) {
+          el.fuel = [];
+           for (key in p[0]) {
             if (!['type', 'lat', 'lon', 'address', 'n', 'fuel', 'region', 'dtW'].includes(key) && p[0][key] != '') {
               el.price.push([key, p[0][key]]);
               el.fuel.push(key);
             }
           }
-          result.push(el);
+          acc.push(el);
+          return acc;
         }
-        return result;
       }, []);
       csv = result;
-      nearest_mode = true;
+      setMode(true);
       getVisible(true);
     });
 };
