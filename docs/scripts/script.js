@@ -6,7 +6,7 @@ var myMap;
 var position = null;
 var csv = [];
 var nearest_mode = true;
-var skip_activeroutechange = true;
+var skip_activeroutechange = false;
 
 function getVisible(zoom) {
   if (position == null) return;
