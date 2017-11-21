@@ -1,5 +1,5 @@
-const CSV_MAP = 'data/dispenser_list_web.csv';
-const CSV_PRICE = 'data/dispenser_list_price.csv';
+const CSV_WEB = 'data/web/dispenser_list.csv';
+const CSV_PRICE = 'data/price/dispenser_list.csv';
 const NEAREST_COUNT = 5;
 
 var myMap;
@@ -7,6 +7,7 @@ var position = null;
 var csv = [];
 var nearest_mode = true;
 var skip_activeroutechange = false;
+
 
 function getVisible(zoom) {
   if (position == null) return;
@@ -97,7 +98,7 @@ ymaps.ready(function () {
 
     myContextMenu = new ContextMenu(myMap, position);
   }).then(function (result) {
-    loadCSV(CSV_MAP, CSV_PRICE);
+    loadCSV(CSV_WEB, CSV_PRICE);
   });
 
   myClusterer = new Clusterer(myMap);

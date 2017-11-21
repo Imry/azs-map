@@ -1,15 +1,11 @@
 function ContextMenu(map, position) {
     this._coordinates = null;
-    this._waypoints = [];
-    this._route = null;
     this._model = new ContextMenu.Model(map);
     this._view = new ContextMenu.View();
     this._position = position;
 
     this.setMap(map);
 }
-
-ContextMenu.WAYPOINTS_LABELS = 'АБ';
 
 ContextMenu.prototype = {
     constructor: ContextMenu,
