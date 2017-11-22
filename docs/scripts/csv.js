@@ -46,12 +46,18 @@ function prepareWeb(web, name) {
 
 function preparePrice(data, name) {
   data.map(el => {
-    el.fuel = el.fuel.split(',').map(s => {
+    var nfuel = [];
+    el.fuel.split(',').map(s => {
       s = s.trim();
       if (s != 'dtW') {
         return s.trim();
       }
-    }).sort();
+    }).sort().forEach(f => {
+      if (f != '') {
+        nfuel.push(f);
+      }
+    });
+    el.fuel = nfuel;
   });
 
   var error = [];
@@ -59,20 +65,24 @@ function preparePrice(data, name) {
     price = [];
     var price_fuel = []
     for (key in el) {
-      if (!['type', 'lat', 'lon', 'address', 'n', 'fuel', 'region', 'dtW'].includes(key) && el[key] != '') {
-        price.push([key, el[key]]);
-        price_fuel.push(key);
+      if (!['type', 'lat', 'lon', 'address', 'n', 'fuel', 'region'].includes(key) && el[key] != '') {
+        var nkey = key;
+        if (key == 'dtW') {
+          nkey = 'dt';
+        }
+        price.push([nkey, el[key]]);
+        price_fuel.push(nkey);
       }
     }
     price_fuel.sort();
     var is_same = (price_fuel.length == el.fuel.length) && price_fuel.every(function(element, index) {
-        return element === el.fuel[index]; 
+        return element === el.fuel[index];
     });
     if (!is_same) {
       error.push(el);
     }
     el.price = price;
-    el.fuel = price_fuel;
+    el.price_fuel = price_fuel;
   });
   if (error.length > 0) {
     console.log('Difference in fuel and prices: %s', error.length);
@@ -92,8 +102,8 @@ function loadCSV(web_name, price_name) {
       var result = [];
       var not_equal = [];
       var corrupted_coords = [];
-      price.forEach(el => {
-        r = web.filter(function(it) {
+      web.forEach(el => {
+        r = price.filter(function(it) {
           return el.n == it.n;
         });
         if (r.length > 0) {
@@ -103,7 +113,8 @@ function loadCSV(web_name, price_name) {
           if (parseFloat(el.lat) != el.lat || parseFloat(el.lon) != el.lon) {
             corrupted_coords.push(el);
           } else {
-            el.services = r[0].services;
+            el.price = r[0].price;
+            el.fuel = r[0].price_fuel;
             result.push(el);
           }
         } else {

@@ -1,5 +1,5 @@
-const CSV_WEB = 'data/web/dispenser_list.csv';
-const CSV_PRICE = 'data/price/dispenser_list.csv';
+const CSV_WEB = 'data/web/dispenser_list.csv'; // http://www.azsgazprom.ru/web/dispenser_list.csv
+const CSV_PRICE = 'data/price/dispenser_list.csv'; // http://www.azsgazprom.ru/price/dispenser_list.csv
 const NEAREST_COUNT = 5;
 
 var myMap;
