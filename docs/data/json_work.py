@@ -6,7 +6,7 @@ import csv
 
 
 def open_csv(fn):
-    with open(fn, 'r', encoding='utf-8') as f:
+    with open(fn) as f:
         reader = csv.reader(f, delimiter=';', quoting=csv.QUOTE_NONE)
         rows = list(reader)
         header = rows[0]
@@ -29,8 +29,8 @@ def open_csv(fn):
                 d['services'] = swap(d['services'])
             result.append(d)
 
-        # with open(fn + '.json', 'w') as f:
-        #     json.dump(result, f, ensure_ascii=False, indent=4)
+        with open(fn + '.json', 'w') as f:
+            json.dump(result, f, ensure_ascii=False, indent=4)
 
         return result
 
@@ -46,23 +46,12 @@ def check_prices(data):
             error.append(d)
         # else:
     with open('prices_different_fuel.csv', 'w', encoding='utf-8') as f:
-        header = 'type;lat;lon;address;n;fuel;region;dt;dtW;ai80;ai92;ai95;ai98;sg'.split(';')
-        print(header)
+        csvwriter = csv.writer(f, delimiter=';')
         for row, emp in enumerate(error):
             if row == 0:
-                # csvwriter.writerow(header)
-                f.write(';'.join(header) + '\n')
+                csvwriter.writerow(emp.keys())
             emp['fuel'] = ', '.join(emp['fuel'])
-            # emp['services'] = ', '.join(emp['services'])
-            # csvwriter.writerow([emp[h] for h in header if h in emp])
-            f.write(';'.join([emp[h] for h in header if h in emp]) + '\n')
-
-        # csvwriter = csv.writer(f, delimiter=';')
-        # for row, emp in enumerate(error):
-        #     if row == 0:
-        #         csvwriter.writerow(emp.keys())
-        #     emp['fuel'] = ', '.join(emp['fuel'])
-        #     csvwriter.writerow(emp.values())
+            csvwriter.writerow(emp.values())
     print(len(error))
 
 def check_web(data):
@@ -115,25 +104,21 @@ def merge(web, price, diff_name):
     # print(error)
 
     with open(diff_name, 'w', encoding='utf-8') as f:
-        # csvwriter = csv.writer(f, delimiter=';')
-        header = 'type;lat;lon;address;n;fuel;region;dt;dtW;ai80;ai92;ai95;ai98;sg'.split(';')
-        print(header)
+        csvwriter = csv.writer(f, delimiter=';')
         for row, emp in enumerate(error):
             if row == 0:
-                # csvwriter.writerow(header)
-                f.write(';'.join(header) + '\n')
+                csvwriter.writerow(emp.keys())
             emp['fuel'] = ', '.join(emp['fuel'])
             # emp['services'] = ', '.join(emp['services'])
-            # csvwriter.writerow([emp[h] for h in header if h in emp])
-            f.write(';'.join([emp[h] for h in header if h in emp]) + '\n')
+            csvwriter.writerow(emp.values())
 
 if __name__ == '__main__':
     # price = open_csv('dispenser_list_price.csv')
-    price = open_csv('price/dispenser_list.csv')
+    price = open_csv('dispenser_list (3).csv')
     print(len(price))
     check_prices(price)
 
-    web = open_csv('web/dispenser_list.csv')
+    web = open_csv('dispenser_list (2).csv')
     print(len(web))
     check_web(web)
 
