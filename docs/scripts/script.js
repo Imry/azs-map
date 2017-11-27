@@ -3,14 +3,14 @@ const CSV_PRICE = 'data/price/dispenser_list.csv'; // http://www.azsgazprom.ru/p
 const NEAREST_COUNT = 5;
 
 var myMap;
-var position = null;
+var position_obj = null;
 var csv = [];
 var nearest_mode = true;
 var skip_activeroutechange = false;
 
 
 function getVisible(zoom) {
-  if (position == null) return;
+  if (position_obj == null) return;
   if (csv.length == 0) return;
 
   function getCoords(point) {
@@ -22,7 +22,7 @@ function getVisible(zoom) {
   myDistancePanel.hide();
 
   if (nearest_mode) {
-    showData(data.map(el => ({data: el, dst: coordSystem.getDistance(position, getCoords(el))}))
+    showData(data.map(el => ({data: el, dst: coordSystem.getDistance(position_obj.position, getCoords(el))}))
       .sort((a, b) => a.dst - b.dst)
       .slice(0, NEAREST_COUNT)
       .map(el => el.data), zoom);
@@ -74,7 +74,7 @@ function routeTo(lat, lon) {
   setMode(false);
   var state = myMap.controls.get('routeButtonControl').routePanel.state;
   state.set('expanded', true);
-  state.set('from', position);
+  state.set('from', position_obj.position);
   state.set('to', [lat, lon]);
 }
 
@@ -90,13 +90,15 @@ ymaps.ready(function () {
     provider: 'auto',
     // mapStateAutoApply: true
   }).then(function (result) {
-    position = result.geoObjects.position;
-    myMap.setCenter(position, 12, {
+    position_obj = result.geoObjects;
+    myMap.setCenter(position_obj.position, 12, {
       checkZoomRange: true
     });
-    myMap.geoObjects.add(result.geoObjects);
+    myMap.geoObjects.add(position_obj);
 
-    myContextMenu = new ContextMenu(myMap, position);
+    myContextMenu = new ContextMenu(myMap, position_obj.position);
+  }, function (e) {
+      // alert(e);
   }).then(function (result) {
     loadCSV(CSV_WEB, CSV_PRICE);
   });
@@ -123,8 +125,9 @@ ymaps.ready(function () {
     });
 
   myMap.controls.get('geolocationControl').events.add("locationchange", function (event) {
-    position = event.get('geoObjects').position;
-  })
+    myMap.geoObjects.remove(position_obj);
+    position_obj = event.get('geoObjects');
+  });
 });
 
 function setMode(mode) {
