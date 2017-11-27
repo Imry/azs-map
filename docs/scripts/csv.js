@@ -44,7 +44,11 @@ function prepareWeb(web, name) {
   return data;
 }
 
-function preparePrice(data, name) {
+function preparePrice(price, name) {
+  data = filterEmpty(price);
+  if (data.length < price.length) {
+    console.log('In %s empty lines: %s', name, price.length - data.length);
+  }
   data.map(el => {
     var nfuel = [];
     el.fuel.split(',').map(s => {
@@ -92,6 +96,10 @@ function preparePrice(data, name) {
   return data; 
 }
 
+function isCoordValid(point) {
+  return 
+}
+
 function loadCSV(web_name, price_name) {
   Promise.all([Papa.parsePromise(web_name), Papa.parsePromise(price_name)])
     .then(function(allData) {
@@ -102,26 +110,55 @@ function loadCSV(web_name, price_name) {
       var result = [];
       var not_equal = [];
       var corrupted_coords = [];
-      web.forEach(el => {
-        r = price.filter(function(it) {
-          return el.n == it.n;
+      var not_in_price = [];
+      web.forEach(w => {
+        var el = Object.assign({}, w);
+        r = price.filter(p => {
+          return el.n == p.n;
         });
         if (r.length > 0) {
           if (el.lat != r[0].lat || el.lon != r[0].lon) {
-            not_equal.push([el, r[0]]);
+            not_equal.push([w, r[0]]);
           }
           if (parseFloat(el.lat) != el.lat || parseFloat(el.lon) != el.lon) {
-            corrupted_coords.push(el);
+            if (parseFloat(r[0].lat) != r[0].lat || parseFloat(r[0].lon) != r[0].lon) {
+              corrupted_coords.push([w, r[0]]);
+            } else {
+              corrupted_coords.push(w);
+              el.lat = r[0].lat;
+              el.lon = r[0].lon;
+              el.price = r[0].price;
+              el.fuel = r[0].price_fuel;
+              result.push(el);
+            }
           } else {
             el.price = r[0].price;
             el.fuel = r[0].price_fuel;
             result.push(el);
           }
         } else {
-          console.log(el);
+          not_in_price.push(el);
         }
       });
-      // console.log(result);
+
+      var not_in_web = [];
+      price.forEach(p => {
+        var el = Object.assign({}, p);
+        r = result.filter(r => {
+          return el.n == r.n;
+        });
+        if (r.length == 0) {
+          not_in_price.push(p);
+          if (parseFloat(p.lat) != p.lat || parseFloat(p.lon) != p.lon) {
+            corrupted_coords.push(p);
+          } else {
+            el.fuel = el.price_fuel;
+            el.services = [];
+            result.push(el);
+          }
+        }
+      });
+
       if (corrupted_coords.length > 0) {
         console.log('Corrupted coordinates for %s lines', corrupted_coords.length);
         console.log(corrupted_coords);
@@ -129,6 +166,14 @@ function loadCSV(web_name, price_name) {
       if (not_equal.length > 0) {
         console.log('Not equal coordinates for %s lines', not_equal.length);
         console.log(not_equal);
+      }
+      if (not_in_web.length > 0) {
+        console.log('Not in %s: %s', web_name, not_in_web.length);
+        console.log(not_in_web);
+      }
+      if (not_in_price.length > 0) {
+        console.log('Not in %s: %s', price_name, not_in_price.length);
+        console.log(not_in_price);
       }
       console.log('Total load: %s', result.length);
 
