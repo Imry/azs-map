@@ -1,3 +1,4 @@
 .idea
 *.py
 docs/data/json_work.py
+docs/_data
