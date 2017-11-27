@@ -130,8 +130,11 @@ function loadCSV(web_name, price_name) {
         console.log('Not equal coordinates for %s lines', not_equal.length);
         console.log(not_equal);
       }
+      console.log('Total load: %s', result.length);
+
+      // return result;
+
       csv = result;
-      console.log('Total load: %s', csv.length);
 
       setMode(true);
       getVisible(true);

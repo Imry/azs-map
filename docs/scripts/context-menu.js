@@ -80,17 +80,17 @@ ContextMenu.prototype = {
     },
     _addWayPoint: function (index) {
         var state = this._model._map.controls.get('routeButtonControl').routePanel.state;
-        var from, to;
+        var from = state.get('from'), to = state.get('to');
         if (index == 0) {
-            if (state.get('to') == null || state.get('to') == '') {
+            if (to == null || to == '') {
                 to = this._position;
             }
-            from = this._coordinates
+            from = this._coordinates;
         } else {
-            if (state.get('from') == null || state.get('from') == '') {
+            if (from == null || from == '') {
                 from = this._position;
             }
-            to = this._coordinates
+            to = this._coordinates;
         }
         state.set({
             from: from,
