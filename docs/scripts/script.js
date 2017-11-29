@@ -72,10 +72,11 @@ function showData(data, zoom) {
 
 function routeTo(lat, lon) {
   setMode(false);
-  var state = myMap.controls.get('routeButtonControl').routePanel.state;
-  state.set('expanded', true);
-  state.set('from', position_obj.position);
-  state.set('to', [lat, lon]);
+  myMap.controls.get('routeButtonControl').routePanel.state.set({
+    from: position_obj.position,
+    to: [lat, lon],
+    expanded: true
+  });
 }
 
 ymaps.ready(function () {

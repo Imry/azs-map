@@ -96,10 +96,6 @@ function preparePrice(price, name) {
   return data; 
 }
 
-function isCoordValid(point) {
-  return 
-}
-
 function loadCSV(web_name, price_name) {
   Promise.all([Papa.parsePromise(web_name), Papa.parsePromise(price_name)])
     .then(function(allData) {
