@@ -1,4 +1,4 @@
-const CSV = 'data/price.csv'; // http://www.azsgazprom.ru/price/price.csv
+const CSV = 'data/price.csv'; // https://www.azsgazprom.ru/price/price.csv
 const NEAREST_COUNT = 5; // Количество отображаемых ближайших заправок
 
 var myMap;
