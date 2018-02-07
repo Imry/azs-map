@@ -1,6 +1,5 @@
-const CSV_WEB = 'data/web/dispenser_list.csv'; // http://www.azsgazprom.ru/web/dispenser_list.csv
-const CSV_PRICE = 'data/price/dispenser_list.csv'; // http://www.azsgazprom.ru/price/dispenser_list.csv
-const NEAREST_COUNT = 5;
+const CSV = 'data/price.csv'; // http://www.azsgazprom.ru/price/price.csv
+const NEAREST_COUNT = 5; // Количество отображаемых ближайших заправок
 
 var myMap;
 var position_obj = null;
@@ -34,8 +33,10 @@ function getVisible(zoom) {
           myDistancePanel.show((route.properties.get('distance').value / 1000).toFixed(1));
           data = Array.from(new Set(
               route.getPaths().get(0).getSegments().toArray().map(segment =>
-                data.map(el => ({point: el, dst: coordSystem.getDistance(segment.geometry.getBounds()[0], getCoords(el))}))
-                  .reduce((acc, val) => val.dst < acc.dst ? val : acc).point
+                data.map(el => ({point: el, dst: coordSystem.getDistance(
+                  segment.geometry.getBounds()[0], getCoords(el)
+                )}))
+                .reduce((acc, val) => val.dst < acc.dst ? val : acc).point
           )));
         }
         showData(data, zoom);
@@ -101,7 +102,7 @@ ymaps.ready(function () {
   }, function (e) {
       // alert(e);
   }).then(function (result) {
-    loadCSV(CSV_WEB, CSV_PRICE);
+    loadCSV(CSV);
   });
 
   myClusterer = new Clusterer(myMap);
@@ -152,15 +153,14 @@ function filterPanelToggle() {
 $(document).ready(function(){
   $("#filter_nearest").click(function(e){
     if (!nearest_mode) {
-    skip_activeroutechange = true;
-    myMap.controls.get('routeButtonControl').routePanel.state.set({
-      expanded: false,
-      from: '',
-      to: ''
-    });
-    setMode(true);
-    getVisible(true);
-
+      skip_activeroutechange = true;
+      myMap.controls.get('routeButtonControl').routePanel.state.set({
+        expanded: false,
+        from: '',
+        to: ''
+      });
+      setMode(true);
+      getVisible(true);
     }
   });
 

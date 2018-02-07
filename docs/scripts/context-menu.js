@@ -82,15 +82,15 @@ ContextMenu.prototype = {
         var state = this._model._map.controls.get('routeButtonControl').routePanel.state;
         var from = state.get('from'), to = state.get('to');
         if (index == 0) {
+            from = this._coordinates;
             if (to == null || to == '') {
                 to = this._position;
             }
-            from = this._coordinates;
         } else {
+            to = this._coordinates;
             if (from == null || from == '') {
                 from = this._position;
             }
-            to = this._coordinates;
         }
         state.set({
             from: from,

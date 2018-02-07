@@ -5,7 +5,7 @@ function Clusterer(map) {
   this.show = function(data, zoom) {
     function getPointData(address, n, services, fuel, lat, lon) {
       var formattedServices = services.map(function(service) {
-        return '<span class="icon-in-map-baloon m-' + service + '"></span>'
+        return '<span class="icon-in-map-baloon m-' + service + '"></span>';
       });
       var formattedFuel = fuel.map(function(fuel) {
         return '<span class="icon-in-map-baloon m-' + fuel[0] + '"></span> ' +  fuel[1] + 'р.'
