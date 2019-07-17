@@ -191,6 +191,17 @@ input:checked + .icon-btn--ai95 {
 input:checked + .icon-btn--ai98 {
     background-image: url("../images/icon-ai98_active.svg");
 }
+
+.icon-btn--ai100 {
+    background-image: url("../images/icon-ai100.svg");
+}
+
+.icon-in-map-baloon.m-ai100,
+input:checked + .icon-btn--ai100 {
+    background-image: url("../images/icon-ai100_active.svg");
+}
+
+
 /*
 .icon-btn--shower {
     background-image: url("../images/icon-shower.svg");

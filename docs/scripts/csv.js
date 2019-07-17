@@ -58,7 +58,7 @@ function loadCSV(price_name) {
 
       // lines to objects
       var errors = [];
-      var HEADER = 'type;n;lat;lon;address;services;fuel;region;dt;ai80;ai92;ai95;ai98;sg'.split(';');
+      var HEADER = 'type;n;lat;lon;address;services;fuel;region;dt;ai80;ai92;ai95;ai98;ai100;sg'.split(';');
       data = filterEmpty(result.data)
         .reduce((acc, val) => {
         if (val.length == HEADER.length) {
@@ -96,7 +96,7 @@ function loadCSV(price_name) {
 
       // prices to number
       var errors = [];
-      var fuel = 'dt;ai80;ai92;ai95;ai98;sg'.split(';');
+      var fuel = 'dt;ai80;ai92;ai95;ai98;ai100;sg'.split(';');
       data = data.map(el => {
         var price = [];
         var price_fuel = [];
